@@ -12,108 +12,140 @@
 
 
 :root {
-  /* Light Mode (Default) */
-  --bg: #f6f7fb;
+  /* Light Mode (Zinc Premium) */
+  --bg: #f4f4f5;
+  /* Zinc 100 */
   --card: #ffffff;
-  --text-main: #111111;
-  --text-muted: #666666;
-  --text-muted2: #777777;
 
-  --input-bg: #f3f4f6;
-  --input-border: transparent;
+  --text-main: #09090b;
+  /* Zinc 950 */
+  --text-muted: #52525b;
+  /* Zinc 600 */
+  --text-muted2: #71717a;
+  /* Zinc 500 */
+
+  --input-bg: #ffffff;
+  --input-border: #e4e4e7;
+  /* Zinc 200 */
   --input-focus-bg: #ffffff;
-  --input-focus-border: #d1d5db;
+  --input-focus-border: #a1a1aa;
+  /* Zinc 400 */
   --input-focus-ring: rgba(0, 0, 0, 0.05);
 
-  --stone-bg: #fafbfe;
-  --stone-border: #e5e7eb;
+  --stone-bg: #fafafa;
+  /* Zinc 50 */
+  --stone-border: #e4e4e7;
+  /* Zinc 200 */
 
-  --pill-bg: #f3f4f6;
-  --pill-border: #e5e7eb;
+  --pill-bg: #f4f4f5;
+  /* Zinc 100 */
+  --pill-border: #e4e4e7;
+  /* Zinc 200 */
 
-  --button-bg: #1f2937;
-  --button-text: #ffffff;
-  --button-hover: #111827;
+  --button-bg: #18181b;
+  /* Zinc 900 */
+  --button-text: #fafafa;
+  /* Zinc 50 */
+  --button-hover: #27272a;
+  /* Zinc 800 */
 
   --button-sec-bg: #ffffff;
-  --button-sec-text: #374151;
-  --button-sec-border: #d1d5db;
-  --button-sec-hover-bg: #f9fafb;
-  --button-sec-hover-border: #9ca3af;
+  --button-sec-text: #18181b;
+  /* Zinc 900 */
+  --button-sec-border: #e4e4e7;
+  /* Zinc 200 */
+  --button-sec-hover-bg: #f4f4f5;
+  /* Zinc 100 */
+  --button-sec-hover-border: #d4d4d8;
+  /* Zinc 300 */
 
-  --shadow: 0 10px 26px rgba(0, 0, 0, .07);
-  --radius: 16px;
-  --radius2: 14px;
+  --shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --radius: 12px;
+  --radius2: 8px;
   --pad: 16px;
   --gap: 12px;
 
-  --danger: #b42318;
-  --dangerbg: #ffecec;
-  --danger-border: rgba(180, 35, 24, .2);
+  --danger: #ef4444;
+  /* Red 500 */
+  --dangerbg: #fef2f2;
+  /* Red 50 */
+  --danger-border: #fee2e2;
+  /* Red 100 */
 
-  --ok: #1a7f37;
-  --okbg: #e7f7ee;
-  --ok-border: rgba(26, 127, 55, .2);
+  --ok: #22c55e;
+  /* Green 500 */
+  --okbg: #f0fdf4;
+  /* Green 50 */
+  --ok-border: #dcfce7;
+  /* Green 100 */
 
   --link: #2563eb;
-  --table-border: rgba(0, 0, 0, .08);
-  --notice-bg: #fff9e6;
-  --notice-text: #5a4100;
-  --notice-border: rgba(0, 0, 0, .08);
+  /* Blue 600 */
+  --table-border: #e4e4e7;
+  /* Zinc 200 */
+
+  --notice-bg: #fefce8;
+  /* Yellow 50 */
+  --notice-text: #854d0e;
+  /* Yellow 800 */
+  --notice-border: #fef08a;
+  /* Yellow 200 */
 }
 
 [data-theme='dark'] {
-  /* Dark Mode Overrides */
-  --bg: #0f172a;
-  /* Slate 900 */
-  --card: #1e293b;
-  /* Slate 800 */
-  --text-main: #f1f5f9;
-  /* Slate 100 */
-  --text-muted: #94a3b8;
-  /* Slate 400 */
-  --text-muted2: #64748b;
-  /* Slate 500 */
+  /* Dark Mode Overrides - Zinc Palette (Premium/Supabase-like) */
+  --bg: #09090b;
+  /* Zinc 950 */
+  --card: #18181b;
+  /* Zinc 900 */
 
-  --input-bg: #334155;
-  /* Slate 700 */
-  --input-border: #475569;
-  /* Slate 600 */
-  --input-focus-bg: #1e293b;
-  /* Slate 800 */
-  --input-focus-border: #60a5fa;
-  /* Blue 400 */
-  --input-focus-ring: rgba(96, 165, 250, 0.2);
+  --text-main: #fafafa;
+  /* Zinc 50 */
+  --text-muted: #a1a1aa;
+  /* Zinc 400 */
+  --text-muted2: #71717a;
+  /* Zinc 500 */
 
-  --stone-bg: #0f172a;
-  /* Slate 900 */
-  --stone-border: #334155;
-  /* Slate 700 */
+  --input-bg: #09090b;
+  /* Zinc 950 */
+  --input-border: #27272a;
+  /* Zinc 800 */
+  --input-focus-bg: #09090b;
+  /* Zinc 950 */
+  --input-focus-border: #52525b;
+  /* Zinc 600 */
+  --input-focus-ring: rgba(255, 255, 255, 0.1);
 
-  --pill-bg: #334155;
-  /* Slate 700 */
-  --pill-border: #475569;
-  /* Slate 600 */
+  --stone-bg: #18181b;
+  /* Zinc 900 */
+  --stone-border: #27272a;
+  /* Zinc 800 */
 
-  --button-bg: #f8fafc;
-  /* Slate 50 */
-  --button-text: #0f172a;
-  /* Slate 900 */
-  --button-hover: #e2e8f0;
-  /* Slate 200 */
+  --pill-bg: #27272a;
+  /* Zinc 800 */
+  --pill-border: #3f3f46;
+  /* Zinc 700 */
 
-  --button-sec-bg: #1e293b;
-  /* Slate 800 */
-  --button-sec-text: #f1f5f9;
-  /* Slate 100 */
-  --button-sec-border: #475569;
-  /* Slate 600 */
-  --button-sec-hover-bg: #334155;
-  /* Slate 700 */
-  --button-sec-hover-border: #94a3b8;
-  /* Slate 400 */
+  --button-bg: #fafafa;
+  /* Zinc 50 */
+  --button-text: #09090b;
+  /* Zinc 950 */
+  --button-hover: #e4e4e7;
+  /* Zinc 200 */
 
-  --shadow: 0 10px 26px rgba(0, 0, 0, .5);
+  --button-sec-bg: #18181b;
+  /* Zinc 900 */
+  --button-sec-text: #fafafa;
+  /* Zinc 50 */
+  --button-sec-border: #27272a;
+  /* Zinc 800 */
+  --button-sec-hover-bg: #27272a;
+  /* Zinc 800 */
+  --button-sec-hover-border: #3f3f46;
+  /* Zinc 700 */
+
+  --shadow: 0 0 0 1px #27272a, 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  /* Subtle border + shadow */
 
   --danger: #f87171;
   /* Red 400 */
@@ -131,10 +163,11 @@
 
   --link: #60a5fa;
   /* Blue 400 */
-  --table-border: #334155;
-  /* Slate 700 */
-  --notice-bg: #422006;
-  /* Yellow/Brown 950 */
+  --table-border: #27272a;
+  /* Zinc 800 */
+
+  --notice-bg: #2e2003;
+  /* Yellow 950 (darker) */
   --notice-text: #fde047;
   /* Yellow 300 */
   --notice-border: #713f12;
