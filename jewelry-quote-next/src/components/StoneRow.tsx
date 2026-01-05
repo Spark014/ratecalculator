@@ -46,7 +46,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 <div className="col">
                     <label>Gem Type</label>
                     {isDiamond ? (
-                        <input type="text" value="Diamond" disabled style={{ background: '#eee' }} />
+                        <input type="text" value="Diamond" disabled style={{ background: 'var(--pill-bg)' }} />
                     ) : (
                         <select
                             value={stone.typeKey}
@@ -124,7 +124,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             </div>
 
             {/* Quality / 4C */}
-            <div style={{ background: '#fff', padding: 10, borderRadius: 8, border: '1px solid #eee', margin: '10px 0' }}>
+            <div style={{ background: 'var(--card)', padding: 10, borderRadius: 8, border: '1px solid var(--stone-border)', margin: '10px 0' }}>
                 {isDiamond ? (
                     <div className="row">
                         <div className="col">
@@ -206,13 +206,13 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     <input
                         type="number"
                         className={stone.priceMode === 0 ? 'mono' : ''}
-                        style={stone.priceMode === 0 ? { background: '#eee' } : {}}
+                        style={stone.priceMode === 0 ? { background: 'var(--pill-bg)' } : {}}
                         value={stone.pricePerCt}
                         onChange={(e) => handleChange('pricePerCt', e.target.value)}
                         disabled={stone.priceMode === 0}
                     />
                 </div>
-                <div className="col" style={{ textAlign: 'right', fontWeight: 900, color: '#2563eb', fontSize: 15, paddingBottom: 10 }}>
+                <div className="col" style={{ textAlign: 'right', fontWeight: 900, color: 'var(--link)', fontSize: 15, paddingBottom: 10 }}>
                     {currency} {stone.sub}
                 </div>
             </div>

@@ -113,7 +113,7 @@ Final Quote: ${ccy} ${computed.quoteTotal}
             <div className="kv" style={{ marginTop: 10 }}>
                 <span className="k">Final Quote</span>
             </div>
-            <div style={{ fontSize: 24, fontWeight: 'bold', color: '#2563eb', marginBottom: 20 }}>
+            <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--link)', marginBottom: 20 }}>
                 {state.currency} {computed.quoteTotal}
             </div>
 
@@ -122,7 +122,7 @@ Final Quote: ${ccy} ${computed.quoteTotal}
                 <button onClick={onClear} className="secondary">Clear</button>
             </div>
 
-            <div style={{ marginTop: 20, background: '#fffbeb', border: '1px solid #fcd34d', padding: 10, borderRadius: 6, fontSize: 12, color: '#92400e', lineHeight: 1.5 }}>
+            <div className="notice" style={{ marginTop: 20 }}>
                 <b>Note:</b> The built-in gem/metal prices are SAMPLES only and do not represent market prices. In actual business, please change the price catalog to your purchase/factory prices, or connect to your internal price list.
             </div>
         </div>

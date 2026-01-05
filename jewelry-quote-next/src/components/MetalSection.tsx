@@ -60,7 +60,7 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                     <input
                         type="number"
                         className={metal.priceMode === 0 ? 'mono' : ''}
-                        style={metal.priceMode === 0 ? { background: '#eee' } : {}}
+                        style={metal.priceMode === 0 ? { background: 'var(--pill-bg)' } : {}}
                         value={metal.pricePerGram}
                         onChange={(e) => handleChange('pricePerGram', e.target.value)}
                         disabled={metal.priceMode === 0}

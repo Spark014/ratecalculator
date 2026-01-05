@@ -168,7 +168,7 @@ export default function TestPage() {
                         <Edit size={14} style={{ marginRight: 4 }} /> Write "Demo Quote" to Calculator & Redirect
                     </button>
                 </div>
-                <div className="small" style={{ marginTop: 8, color: '#666' }}>
+                <div className="small" style={{ marginTop: 8 }}>
                     Note: Test prices depend on built-in sample catalog; if you modified the catalog, expected values may need adjustment.
                 </div>
             </div>
@@ -187,7 +187,7 @@ export default function TestPage() {
                     </thead>
                     <tbody>
                         {results.length === 0 && (
-                            <tr><td colSpan={5} style={{ textAlign: 'center', color: '#999' }}>No results yet. Click "Run All Tests".</td></tr>
+                            <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No results yet. Click "Run All Tests".</td></tr>
                         )}
                         {results.map((r, i) => {
                             const tc = TEST_CASES.find(t => t.id === r.id);
