@@ -19,20 +19,22 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
     };
 
     return (
-        <div className="p-3 mb-2 bg-gray-50 border rounded-md text-sm">
-            <div className="flex justify-between items-center mb-2">
-                <div className="font-bold text-gray-700">#{index + 1}</div>
-                <button onClick={() => onRemove(index)} className="text-red-500 hover:text-red-700">
-                    <Trash2 size={16} />
+        <div className="stone">
+            <div className="stone-head">
+                <div className="badge">
+                    <b>#{index + 1}</b>
+                    <div className="pill">{isDiamond ? 'Diamond' : 'Colored Gem'}</div>
+                </div>
+                <button onClick={() => onRemove(index)} className="danger" title="Remove Row">
+                    <Trash2 size={14} /> Remove
                 </button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+            <div className="row" style={{ marginTop: 10 }}>
                 {/* Role */}
-                <div>
-                    <label className="block text-xs text-gray-500">Role</label>
+                <div className="col">
+                    <label>Role</label>
                     <select
-                        className="w-full border rounded p-1"
                         value={stone.roleIndex}
                         onChange={(e) => handleChange('roleIndex', parseInt(e.target.value))}
                     >
@@ -41,13 +43,12 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 </div>
 
                 {/* Type */}
-                <div>
-                    <label className="block text-xs text-gray-500">Gem Type</label>
+                <div className="col">
+                    <label>Gem Type</label>
                     {isDiamond ? (
-                        <input type="text" value="Diamond" disabled className="w-full border rounded p-1 bg-gray-100" />
+                        <input type="text" value="Diamond" disabled style={{ background: '#eee' }} />
                     ) : (
                         <select
-                            className="w-full border rounded p-1"
                             value={stone.typeKey}
                             onChange={(e) => handleChange('typeKey', e.target.value)}
                         >
@@ -57,10 +58,9 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 </div>
 
                 {/* Weight Mode */}
-                <div className="col-span-2">
-                    <label className="block text-xs text-gray-500">Weight Mode</label>
+                <div className="col" style={{ flex: 2 }}>
+                    <label>Weight Mode</label>
                     <select
-                        className="w-full border rounded p-1"
                         value={stone.weightMode}
                         onChange={(e) => handleChange('weightMode', parseInt(e.target.value))}
                     >
@@ -70,12 +70,12 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             </div>
 
             {/* Weight Inputs */}
-            <div className="grid grid-cols-3 gap-2 mb-2">
+            <div className="row" style={{ marginTop: 10 }}>
                 {stone.weightMode === 0 && (
-                    <div>
-                        <label className="block text-xs text-gray-500">Total Weight (ct)</label>
+                    <div className="col">
+                        <label>Total Weight (ct)</label>
                         <input
-                            type="number" className="w-full border rounded p-1"
+                            type="number"
                             value={stone.totalCt}
                             onChange={(e) => handleChange('totalCt', e.target.value)}
                         />
@@ -83,18 +83,18 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 )}
                 {stone.weightMode === 1 && (
                     <>
-                        <div>
-                            <label className="block text-xs text-gray-500">Weight Each (ct)</label>
+                        <div className="col">
+                            <label>Weight Each (ct)</label>
                             <input
-                                type="number" className="w-full border rounded p-1"
+                                type="number"
                                 value={stone.ctEach}
                                 onChange={(e) => handleChange('ctEach', e.target.value)}
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Qty</label>
+                        <div className="col">
+                            <label>Qty</label>
                             <input
-                                type="number" className="w-full border rounded p-1"
+                                type="number"
                                 value={stone.qty}
                                 onChange={(e) => handleChange('qty', e.target.value)}
                             />
@@ -103,18 +103,18 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 )}
                 {stone.weightMode === 2 && (
                     <>
-                        <div>
-                            <label className="block text-xs text-gray-500">Diameter (mm)</label>
+                        <div className="col">
+                            <label>Diameter (mm)</label>
                             <input
-                                type="number" className="w-full border rounded p-1"
+                                type="number"
                                 value={stone.mm}
                                 onChange={(e) => handleChange('mm', e.target.value)}
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Qty</label>
+                        <div className="col">
+                            <label>Qty</label>
                             <input
-                                type="number" className="w-full border rounded p-1"
+                                type="number"
                                 value={stone.qty}
                                 onChange={(e) => handleChange('qty', e.target.value)}
                             />
@@ -124,43 +124,39 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             </div>
 
             {/* Quality / 4C */}
-            <div className="mb-2 p-2 bg-white rounded border">
+            <div style={{ background: '#fff', padding: 10, borderRadius: 8, border: '1px solid #eee', margin: '10px 0' }}>
                 {isDiamond ? (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <div>
-                            <label className="block text-xs text-gray-500">Color</label>
+                    <div className="row">
+                        <div className="col">
+                            <label>Color</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.dColor}
                                 onChange={(e) => handleChange('dColor', e.target.value)}
                             >
                                 {CATALOG.diamond.colors.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Clarity</label>
+                        <div className="col">
+                            <label>Clarity</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.dClarity}
                                 onChange={(e) => handleChange('dClarity', e.target.value)}
                             >
                                 {CATALOG.diamond.clarities.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Cut</label>
+                        <div className="col">
+                            <label>Cut</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.dCutIndex}
                                 onChange={(e) => handleChange('dCutIndex', parseInt(e.target.value))}
                             >
                                 {CATALOG.diamond.cuts.map((c, i) => <option key={i} value={i}>{c.name}</option>)}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Fluor</label>
+                        <div className="col">
+                            <label>Fluor</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.dFluorIndex}
                                 onChange={(e) => handleChange('dFluorIndex', parseInt(e.target.value))}
                             >
@@ -169,11 +165,10 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-2">
-                        <div>
-                            <label className="block text-xs text-gray-500">Grade</label>
+                    <div className="row">
+                        <div className="col">
+                            <label>Grade</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.gradeIndex}
                                 onChange={(e) => handleChange('gradeIndex', parseInt(e.target.value))}
                             >
@@ -182,10 +177,9 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 ))}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-xs text-gray-500">Treatment</label>
+                        <div className="col">
+                            <label>Treatment</label>
                             <select
-                                className="w-full border rounded p-1"
                                 value={stone.treatmentKey}
                                 onChange={(e) => handleChange('treatmentKey', e.target.value)}
                             >
@@ -197,28 +191,28 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             </div>
 
             {/* Price */}
-            <div className="grid grid-cols-3 gap-2 items-end">
-                <div>
-                    <label className="block text-xs text-gray-500">Price Mode</label>
+            <div className="row" style={{ alignItems: 'flex-end' }}>
+                <div className="col">
+                    <label>Price Mode</label>
                     <select
-                        className="w-full border rounded p-1"
                         value={stone.priceMode}
                         onChange={(e) => handleChange('priceMode', parseInt(e.target.value))}
                     >
                         {CATALOG.priceModes.map((m, i) => <option key={i} value={i}>{m}</option>)}
                     </select>
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Price/ct</label>
+                <div className="col">
+                    <label>Price/ct</label>
                     <input
                         type="number"
-                        className={`w-full border rounded p-1 ${stone.priceMode === 0 ? 'bg-gray-100' : ''}`}
+                        className={stone.priceMode === 0 ? 'mono' : ''}
+                        style={stone.priceMode === 0 ? { background: '#eee' } : {}}
                         value={stone.pricePerCt}
                         onChange={(e) => handleChange('pricePerCt', e.target.value)}
                         disabled={stone.priceMode === 0}
                     />
                 </div>
-                <div className="text-right font-bold text-blue-600">
+                <div className="col" style={{ textAlign: 'right', fontWeight: 900, color: '#2563eb', fontSize: 15, paddingBottom: 10 }}>
                     {currency} {stone.sub}
                 </div>
             </div>

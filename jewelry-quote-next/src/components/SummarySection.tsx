@@ -6,11 +6,11 @@ import { getLineTotalCt, isDiamondLine, num, money } from '@/lib/calculations';
 interface SummarySectionProps {
     state: QuoteState;
     computed: ComputedValues;
-    onUpdatePack: (updates: Partial<Pack>) => void;
     onUpdateRate: (field: 'profitRate' | 'taxRate', value: string) => void;
+    onClear: () => void;
 }
 
-export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed, onUpdatePack, onUpdateRate }) => {
+export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed, onUpdateRate, onClear }) => {
 
     const copyQuote = () => {
         const ccy = state.currency;
@@ -81,63 +81,49 @@ Final Quote: ${ccy} ${computed.quoteTotal}
     };
 
     return (
-        <div className="bg-white p-4 rounded shadow mb-4">
-            <h3 className="font-bold text-lg mb-3 border-b pb-1">Packaging & Totals</h3>
+        <div className="card">
+            <h2>Summary & Quote</h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div>
-                    <label className="block text-xs text-gray-500">Pack Fee</label>
-                    <input
-                        type="number" className="w-full border rounded p-1"
-                        value={state.pack.packFee}
-                        onChange={(e) => onUpdatePack({ packFee: e.target.value })}
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Cert/Tag</label>
-                    <input
-                        type="number" className="w-full border rounded p-1"
-                        value={state.pack.certFee}
-                        onChange={(e) => onUpdatePack({ certFee: e.target.value })}
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Profit Rate (%)</label>
-                    <input
-                        type="number" className="w-full border rounded p-1"
-                        value={state.profitRate}
-                        onChange={(e) => onUpdateRate('profitRate', e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Tax Rate (%)</label>
-                    <input
-                        type="number" className="w-full border rounded p-1"
-                        value={state.taxRate}
-                        onChange={(e) => onUpdateRate('taxRate', e.target.value)}
-                    />
-                </div>
+            <div className="kv" style={{ marginTop: 10 }}>
+                <span className="k">Total Cost</span>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
+                {state.currency} {computed.costTotal}
             </div>
 
-            <div className="bg-gray-100 p-3 rounded space-y-1 text-sm">
-                <div className="flex justify-between"><span>Gems:</span> <span>{state.currency} {computed.stonesTotal}</span></div>
-                <div className="flex justify-between"><span>Metal:</span> <span>{state.currency} {computed.metalSub}</span></div>
-                <div className="flex justify-between"><span>Labor:</span> <span>{state.currency} {computed.laborSub}</span></div>
-                <div className="flex justify-between"><span>Pack:</span> <span>{state.currency} {computed.packSub}</span></div>
-                <div className="border-t my-1"></div>
-                <div className="flex justify-between font-bold"><span>Cost Total:</span> <span>{state.currency} {computed.costTotal}</span></div>
-                <div className="flex justify-between text-xl font-bold text-blue-700 mt-2">
-                    <span>Final Quote:</span> <span>{state.currency} {computed.quoteTotal}</span>
-                </div>
+            <div className="col" style={{ marginBottom: 10 }}>
+                <label>Profit Rate (% Optional)</label>
+                <input
+                    type="number"
+                    value={state.profitRate}
+                    onChange={(e) => onUpdateRate('profitRate', e.target.value)}
+                    placeholder="e.g. 20"
+                />
+            </div>
+            <div className="col" style={{ marginBottom: 10 }}>
+                <label>Tax Rate (% Optional)</label>
+                <input
+                    type="number"
+                    value={state.taxRate}
+                    onChange={(e) => onUpdateRate('taxRate', e.target.value)}
+                    placeholder="e.g. 8"
+                />
             </div>
 
-            <div className="mt-4 text-center">
-                <button
-                    onClick={copyQuote}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full md:w-auto"
-                >
-                    Copy Quote Text
-                </button>
+            <div className="kv" style={{ marginTop: 10 }}>
+                <span className="k">Final Quote</span>
+            </div>
+            <div style={{ fontSize: 24, fontWeight: 'bold', color: '#2563eb', marginBottom: 20 }}>
+                {state.currency} {computed.quoteTotal}
+            </div>
+
+            <div className="btnrow">
+                <button onClick={copyQuote}>Copy Quote</button>
+                <button onClick={onClear} className="secondary">Clear</button>
+            </div>
+
+            <div style={{ marginTop: 20, background: '#fffbeb', border: '1px solid #fcd34d', padding: 10, borderRadius: 6, fontSize: 12, color: '#92400e', lineHeight: 1.5 }}>
+                <b>Note:</b> The built-in gem/metal prices are SAMPLES only and do not represent market prices. In actual business, please change the price catalog to your purchase/factory prices, or connect to your internal price list.
             </div>
         </div>
     );

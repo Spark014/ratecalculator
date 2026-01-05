@@ -7,7 +7,10 @@ import { MetalSection } from './MetalSection';
 import { LaborSection } from './LaborSection';
 import { SummarySection } from './SummarySection';
 import { CATALOG } from '@/lib/catalog';
-import { Plus } from 'lucide-react';
+import { QuickGuide } from './QuickGuide';
+import { Plus, Trash2, ExternalLink, RotateCcw } from 'lucide-react';
+import Link from 'next/link';
+import { PackagingSection } from './PackagingSection';
 
 export const QuoteCalculator: React.FC = () => {
     const {
@@ -15,104 +18,140 @@ export const QuoteCalculator: React.FC = () => {
     } = useQuote();
 
     return (
-        <div className="max-w-4xl mx-auto p-4 bg-gray-50 min-h-screen">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Jewelry Quote (Next.js)</h1>
-                <button onClick={resetAll} className="text-sm text-red-500 underline">Reset All</button>
-            </div>
-
-            {/* Header Info */}
-            <div className="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="container">
+            <div className="header">
                 <div>
-                    <label className="block text-xs text-gray-500">Quote No</label>
-                    <input
-                        type="text" className="w-full border rounded p-1 bg-gray-100"
-                        value={state.quoteNo} disabled
-                    />
+                    <div className="h1">Jewelry Quote (Web Version)</div>
+                    <div className="sub">
+                        Supports: Multi-line Main/Side Stones, Gem Type/Quality/Weight, <b>Diamond 4C (Simplified Table)</b>, Treatment Multipliers,
+                        <b>Side Stone Estimate by Diameter(mm)</b>, Metal Material/Weight/Loss, Labor/Packaging, Profit/Tax, Copy Quote.<br />
+                        Built-in prices are SAMPLES only: Please replace with your purchase/factory prices in CATALOG inside <code>app.js</code>.
+                    </div>
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Currency</label>
-                    <select
-                        className="w-full border rounded p-1"
-                        value={state.currency}
-                        onChange={(e) => updateState({ currency: e.target.value })}
-                    >
-                        {CATALOG.currencyList.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Customer Name</label>
-                    <input
-                        type="text" className="w-full border rounded p-1"
-                        value={state.customerName}
-                        onChange={(e) => updateState({ customerName: e.target.value })}
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Product / Style</label>
-                    <input
-                        type="text" className="w-full border rounded p-1"
-                        value={state.productName}
-                        onChange={(e) => updateState({ productName: e.target.value })}
-                    />
+                <div className="nav">
+                    <Link href="/test">
+                        <ExternalLink size={14} /> Test Page
+                    </Link>
+                    <button onClick={resetAll} className="secondary">
+                        <RotateCcw size={14} /> Reset
+                    </button>
                 </div>
             </div>
 
-            {/* Stones */}
-            <div className="bg-white p-4 rounded shadow mb-4">
-                <h3 className="font-bold text-lg mb-3 border-b pb-1">Gem Details</h3>
-                {state.stones.map((stone, index) => (
-                    <StoneRow
-                        key={stone.id}
-                        stone={stone}
-                        index={index}
+            <div className="grid">
+                <div className="left-col">
+                    {/* Header Info */}
+                    <div className="card">
+                        <h2>Basic Info</h2>
+                        <div className="row">
+                            <div className="col">
+                                <label>Customer Name (Optional)</label>
+                                <input
+                                    type="text"
+                                    value={state.customerName}
+                                    onChange={(e) => updateState({ customerName: e.target.value })}
+                                    placeholder="e.g. Customer A / LAKSALA"
+                                />
+                            </div>
+                            <div className="col">
+                                <label>Product/Style (Optional)</label>
+                                <input
+                                    type="text"
+                                    value={state.productName}
+                                    onChange={(e) => updateState({ productName: e.target.value })}
+                                    placeholder="e.g. 18K Sapphire Ring"
+                                />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: 10 }}>
+                            <div className="col">
+                                <label>Currency</label>
+                                <select
+                                    value={state.currency}
+                                    onChange={(e) => updateState({ currency: e.target.value })}
+                                >
+                                    {CATALOG.currencyList.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div className="col">
+                                <label>Quote No.</label>
+                                <input
+                                    type="text" className="mono"
+                                    value={state.quoteNo} disabled
+                                />
+                            </div>
+                        </div>
+                        <div className="small" style={{ marginTop: 10 }}>
+                            Gems default to "Price per ct"; Side stones can use "Diameter(mm) × Qty" to estimate ct (approx for round diamonds).
+                            Diamond auto-price calculated by "Simplified 4C Table + Cut/Fluor Multiplier".
+                        </div>
+                    </div>
+
+                    {/* Stones */}
+                    <div className="card">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2>Gem Details (Main/Side)</h2>
+                        </div>
+
+                        <div className="btnrow" style={{ marginBottom: 12 }}>
+                            <button onClick={() => addStone(0, false)}>+ Add Stone Row</button>
+                            <button className="secondary" onClick={() => addStone(0, true)}>+ Add Diamond Row</button>
+                        </div>
+
+                        {state.stones.map((stone, index) => (
+                            <StoneRow
+                                key={stone.id}
+                                stone={stone}
+                                index={index}
+                                currency={state.currency}
+                                onUpdate={updateStone}
+                                onRemove={removeStone}
+                            />
+                        ))}
+
+                        <div className="total" style={{ marginTop: 10 }}>
+                            Gems Total: {state.currency} {computed.stonesTotal}
+                        </div>
+                    </div>
+
+                    {/* Metal */}
+                    <MetalSection
+                        metal={state.metal}
+                        subtotal={computed.metalSub}
                         currency={state.currency}
-                        onUpdate={updateStone}
-                        onRemove={removeStone}
+                        onUpdate={(updates) => updateState({ metal: { ...state.metal, ...updates } })}
                     />
-                ))}
-                <div className="flex gap-2 mt-3">
-                    <button
-                        onClick={() => addStone(0, false)}
-                        className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
-                    >
-                        <Plus size={16} /> Add Stone Row
-                    </button>
-                    <button
-                        onClick={() => addStone(0, true)}
-                        className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-                    >
-                        <Plus size={16} /> Add Diamond Row
-                    </button>
+
+                    {/* Labor */}
+                    <LaborSection
+                        labor={state.labor}
+                        subtotal={computed.laborSub}
+                        currency={state.currency}
+                        onUpdate={(updates) => updateState({ labor: { ...state.labor, ...updates } })}
+                    />
+
+                    {/* Packaging */}
+                    <PackagingSection
+                        pack={state.pack}
+                        subtotal={computed.packSub}
+                        currency={state.currency}
+                        onUpdate={(updates) => updateState({ pack: { ...state.pack, ...updates } })}
+                    />
                 </div>
-                <div className="mt-3 text-right font-bold text-gray-700">
-                    Gems Total: {state.currency} {computed.stonesTotal}
+
+                <div className="right-col">
+                    {/* Summary */}
+                    <SummarySection
+                        state={state}
+                        computed={computed}
+                        onUpdateRate={(field, value) => updateState({ [field]: value })}
+                        onClear={resetAll}
+                    />
+
+                    {/* Quick Guide */}
+                    <QuickGuide />
                 </div>
             </div>
-
-            {/* Metal */}
-            <MetalSection
-                metal={state.metal}
-                subtotal={computed.metalSub}
-                currency={state.currency}
-                onUpdate={(updates) => updateState({ metal: { ...state.metal, ...updates } })}
-            />
-
-            {/* Labor */}
-            <LaborSection
-                labor={state.labor}
-                subtotal={computed.laborSub}
-                currency={state.currency}
-                onUpdate={(updates) => updateState({ labor: { ...state.labor, ...updates } })}
-            />
-
-            {/* Summary */}
-            <SummarySection
-                state={state}
-                computed={computed}
-                onUpdatePack={(updates) => updateState({ pack: { ...state.pack, ...updates } })}
-                onUpdateRate={(field, value) => updateState({ [field]: value })}
-            />
         </div>
     );
 };

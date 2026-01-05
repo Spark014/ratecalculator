@@ -14,43 +14,43 @@ export const LaborSection: React.FC<LaborSectionProps> = ({ labor, subtotal, cur
     };
 
     return (
-        <div className="bg-white p-4 rounded shadow mb-4">
-            <h3 className="font-bold text-lg mb-3 border-b pb-1">Labor</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div>
-                    <label className="block text-xs text-gray-500">Design</label>
+        <div className="card">
+            <h2>Labor</h2>
+            <div className="row">
+                <div className="col">
+                    <label>Design</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={labor.designFee}
                         onChange={(e) => handleChange('designFee', e.target.value)}
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Mold</label>
+                <div className="col">
+                    <label>Mold</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={labor.moldFee}
                         onChange={(e) => handleChange('moldFee', e.target.value)}
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Making</label>
+                <div className="col">
+                    <label>Making</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={labor.makingFee}
                         onChange={(e) => handleChange('makingFee', e.target.value)}
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Buffer</label>
+                <div className="col">
+                    <label>Buffer</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={labor.reworkFee}
                         onChange={(e) => handleChange('reworkFee', e.target.value)}
                     />
                 </div>
             </div>
-            <div className="mt-3 text-right font-bold text-gray-700">
+            <div className="total" style={{ textAlign: 'right', marginTop: 10 }}>
                 Labor Subtotal: {currency} {subtotal}
             </div>
         </div>

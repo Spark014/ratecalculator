@@ -1,5 +1,5 @@
 import { CATALOG } from './catalog';
-import { Stone } from './types';
+import { Stone, QuoteState, ComputedValues } from './types';
 
 export const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
 export const num = (v: string | number) => { const x = typeof v === 'string' ? parseFloat(v) : v; return Number.isFinite(x) ? x : 0; };
@@ -88,4 +88,52 @@ export function getStoneAutoPricePerCt(line: Stone): number {
         const g = gem.grades[clamp(line.gradeIndex, 0, gem.grades.length - 1)]?.p ?? 0;
         return g * treatmentMult(line.treatmentKey);
     }
+}
+
+export function calculateQuote(state: QuoteState): ComputedValues {
+    // stones
+    let stonesTotal = 0;
+    const stonesWithSub = state.stones.map(line => {
+        const totalCt = getLineTotalCt(line);
+        let ppc = num(line.pricePerCt);
+
+        if (line.priceMode === 0) {
+            ppc = getStoneAutoPricePerCt(line);
+        }
+
+        const sub = totalCt * ppc;
+        return { sub };
+    });
+
+    stonesTotal = stonesWithSub.reduce((acc, s) => acc + s.sub, 0);
+
+    // metal
+    const metal = state.metal;
+    const mat = CATALOG.metals.find(m => m.key === metal.materialKey) || CATALOG.metals[0];
+    let ppg = num(metal.pricePerGram);
+    if (metal.priceMode === 0) {
+        ppg = mat.defaultPpg;
+    }
+    const loss = num(metal.lossRate) / 100;
+    const metalSub = num(metal.weightG) * (1 + loss) * ppg + num(metal.extraFee);
+
+    // labor
+    const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + num(state.labor.makingFee) + num(state.labor.reworkFee);
+
+    // packaging
+    const packSub = num(state.pack.packFee) + num(state.pack.certFee);
+
+    const costTotal = stonesTotal + metalSub + laborSub + packSub;
+    const profit = num(state.profitRate) / 100;
+    const tax = num(state.taxRate) / 100;
+    const quoteTotal = costTotal * (1 + profit) * (1 + tax);
+
+    return {
+        stonesTotal: money(stonesTotal),
+        metalSub: money(metalSub),
+        laborSub: money(laborSub),
+        packSub: money(packSub),
+        costTotal: money(costTotal),
+        quoteTotal: money(quoteTotal)
+    };
 }

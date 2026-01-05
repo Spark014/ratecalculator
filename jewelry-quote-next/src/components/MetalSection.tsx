@@ -15,66 +15,67 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
     };
 
     return (
-        <div className="bg-white p-4 rounded shadow mb-4">
-            <h3 className="font-bold text-lg mb-3 border-b pb-1">Precious Metal</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <div>
-                    <label className="block text-xs text-gray-500">Material</label>
+        <div className="card">
+            <h2>Precious Metal</h2>
+            <div className="row">
+                <div className="col">
+                    <label>Material</label>
                     <select
-                        className="w-full border rounded p-1"
                         value={metal.materialKey}
                         onChange={(e) => handleChange('materialKey', e.target.value)}
                     >
                         {CATALOG.metals.map(m => <option key={m.key} value={m.key}>{m.name}</option>)}
                     </select>
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Weight (g)</label>
+                <div className="col">
+                    <label>Weight (g)</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={metal.weightG}
                         onChange={(e) => handleChange('weightG', e.target.value)}
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Loss Rate (%)</label>
+                <div className="col">
+                    <label>Loss Rate (%)</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={metal.lossRate}
                         onChange={(e) => handleChange('lossRate', e.target.value)}
                         placeholder="e.g. 15"
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Price Mode</label>
+            </div>
+            <div className="row" style={{ marginTop: 10 }}>
+                <div className="col">
+                    <label>Price Mode</label>
                     <select
-                        className="w-full border rounded p-1"
                         value={metal.priceMode}
                         onChange={(e) => handleChange('priceMode', parseInt(e.target.value))}
                     >
                         {CATALOG.priceModes.map((m, i) => <option key={i} value={i}>{m}</option>)}
                     </select>
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Price/g</label>
+                <div className="col">
+                    <label>Price/g</label>
                     <input
                         type="number"
-                        className={`w-full border rounded p-1 ${metal.priceMode === 0 ? 'bg-gray-100' : ''}`}
+                        className={metal.priceMode === 0 ? 'mono' : ''}
+                        style={metal.priceMode === 0 ? { background: '#eee' } : {}}
                         value={metal.pricePerGram}
                         onChange={(e) => handleChange('pricePerGram', e.target.value)}
                         disabled={metal.priceMode === 0}
                     />
                 </div>
-                <div>
-                    <label className="block text-xs text-gray-500">Extra Fee</label>
+                <div className="col">
+                    <label>Extra Fee</label>
                     <input
-                        type="number" className="w-full border rounded p-1"
+                        type="number"
                         value={metal.extraFee}
                         onChange={(e) => handleChange('extraFee', e.target.value)}
                     />
                 </div>
             </div>
-            <div className="mt-3 text-right font-bold text-gray-700">
+            <div className="total" style={{ textAlign: 'right', marginTop: 10 }}>
                 Metal Subtotal: {currency} {subtotal}
             </div>
         </div>

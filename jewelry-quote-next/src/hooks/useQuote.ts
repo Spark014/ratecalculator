@@ -3,7 +3,7 @@ import { CATALOG } from '@/lib/catalog';
 import { Stone, Metal, Labor, Pack, QuoteState, ComputedValues } from '@/lib/types';
 import {
     uid, makeQuoteNo, num, money,
-    getLineTotalCt, getStoneAutoPricePerCt
+    getLineTotalCt, getStoneAutoPricePerCt, calculateQuote
 } from '@/lib/calculations';
 
 const DEFAULT_METAL: Metal = {
@@ -93,61 +93,9 @@ export function useQuote() {
 
     // Recalculate whenever state changes
     useEffect(() => {
-        // stones
-        let stonesTotal = 0;
-        const newStones = state.stones.map(line => {
-            const totalCt = getLineTotalCt(line);
-            let ppc = num(line.pricePerCt);
-
-            if (line.priceMode === 0) {
-                ppc = getStoneAutoPricePerCt(line);
-            }
-
-            const sub = totalCt * ppc;
-            return {
-                ...line,
-                pricePerCt: (line.priceMode === 0 ? String(ppc) : line.pricePerCt),
-                sub: money(sub)
-            };
-        });
-
-        // We only update state.stones if values actually changed to avoid infinite loop
-        // But here we are inside useEffect dependent on state... 
-        // Actually, we should separate "input state" from "computed state" to avoid loops.
-        // However, the original app mutated state. Here we will calculate derived values.
-
-        const stonesWithSub = newStones; // Use these for totals
-        stonesTotal = stonesWithSub.reduce((acc, s) => acc + num(s.sub), 0);
-
-        // metal
-        const metal = state.metal;
-        const mat = CATALOG.metals.find(m => m.key === metal.materialKey) || CATALOG.metals[0];
-        let ppg = num(metal.pricePerGram);
-        if (metal.priceMode === 0) {
-            ppg = mat.defaultPpg;
-        }
-        const loss = num(metal.lossRate) / 100;
-        const metalSub = num(metal.weightG) * (1 + loss) * ppg + num(metal.extraFee);
-
-        // labor
-        const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + num(state.labor.makingFee) + num(state.labor.reworkFee);
-
-        // packaging
-        const packSub = num(state.pack.packFee) + num(state.pack.certFee);
-
-        const costTotal = stonesTotal + metalSub + laborSub + packSub;
-        const profit = num(state.profitRate) / 100;
-        const tax = num(state.taxRate) / 100;
-        const quoteTotal = costTotal * (1 + profit) * (1 + tax);
-
-        setComputed({
-            stonesTotal: money(stonesTotal),
-            metalSub: money(metalSub),
-            laborSub: money(laborSub),
-            packSub: money(packSub),
-            costTotal: money(costTotal),
-            quoteTotal: money(quoteTotal)
-        });
+        // Calculate using shared logic
+        const newComputed = calculateQuote(state);
+        setComputed(newComputed);
 
         // Save to local storage
         // Debounce could be good here, but for now direct save
