@@ -11,6 +11,7 @@ import { QuickGuide } from './QuickGuide';
 import { Plus, Trash2, ExternalLink, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { PackagingSection } from './PackagingSection';
+import { ThemeToggle } from './ThemeToggle';
 
 export const QuoteCalculator: React.FC = () => {
     const {
@@ -35,6 +36,7 @@ export const QuoteCalculator: React.FC = () => {
                     <button onClick={resetAll} className="secondary">
                         <RotateCcw size={14} /> Reset
                     </button>
+                    <ThemeToggle />
                 </div>
             </div>
 
