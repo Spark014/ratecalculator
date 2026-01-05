@@ -1,6 +1,10 @@
 # Jewelry Quote (Web Version)
+===========================
 
-How to Open (Choose one):
+**NEW:** A Next.js version is available in the `jewelry-quote-next` folder.
+
+This is a pure front-end jewelry quote calculator tool.
+How to Open:
 1) Double-click `index.html` directly (works in most browsers)
 2) Or use a local static server (Recommended, avoids some browser restrictions):
    - VSCode Live Server
