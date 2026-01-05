@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Jewelry Quote (Web Version)</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="h1">Jewelry Quote (Web Version)</div>
+        <div class="sub">
+          Supports: Multi-line Main/Side Stones, Gem Type/Quality/Weight, <b>Diamond 4C (Simplified Table)</b>, Treatment Multipliers, <b>Side Stone Estimate by Diameter(mm)</b>, Metal Material/Weight/Loss, Labor/Packaging, Profit/Tax, Copy Quote.
+          <br/>Built-in prices are SAMPLES only: Please replace with your purchase/factory prices in <span class="mono">CATALOG</span> inside <span class="mono">app.js</span>.
+        </div>
+      </div>
+      <div class="nav">
+        <a href="./test.html" title="Open Test Page">🧪 Test Page</a>
+        <a href="#" id="btnResetLink" title="Clear and Reset">🧹 Reset</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <!-- Base -->
+        <div class="card">
+          <h2>Basic Info</h2>
+          <div class="row">
+            <div class="col">
+              <label>Customer Name (Optional)</label>
+              <input id="customerName" placeholder="e.g. Customer A / LAKSALA"/>
+            </div>
+            <div class="col">
+              <label>Product/Style (Optional)</label>
+              <input id="productName" placeholder="e.g. 18K Sapphire Ring"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label>Currency</label>
+              <select id="currency"></select>
+            </div>
+            <div class="col">
+              <label>Quote No.</label>
+              <input id="quoteNo" class="mono" disabled/>
+            </div>
+          </div>
+          <div class="small">
+            Gems default to "Price per ct"; Side stones can use "Diameter(mm) × Qty" to estimate ct (approx for round diamonds). Diamond auto-price calculated by "Simplified 4C Table + Cut/Fluor Multiplier".
+          </div>
+        </div>
+
+        <!-- Stones -->
+        <div class="card">
+          <h2>Gem Details (Main/Side)</h2>
+          <div id="stones"></div>
+          <div class="btnrow">
+            <button id="btnAddStone">+ Add Stone Row</button>
+            <button class="secondary" id="btnAddDiamond">+ Add Diamond Row</button>
+          </div>
+          <div class="kv"><div class="k">Gems Total</div><div class="v"><span class="mono" id="stonesTotal"></span></div></div>
+        </div>
+
+        <!-- Metal -->
+        <div class="card">
+          <h2>Precious Metal</h2>
+          <div class="row">
+            <div class="col">
+              <label>Material</label>
+              <select id="metalMaterial"></select>
+            </div>
+            <div class="col">
+              <label>Weight (g)</label>
+              <input id="metalWeight" type="number" step="0.01" placeholder="e.g. 6.80"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label>Price per Gram Mode</label>
+              <select id="metalPriceMode">
+                <option value="0">Auto Price</option>
+                <option value="1">Manual Price</option>
+              </select>
+            </div>
+            <div class="col">
+              <label>Price per Gram</label>
+              <input id="metalPpg" type="number" step="0.01"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label>Loss Rate (% Optional)</label>
+              <input id="metalLoss" type="number" step="0.01" placeholder="e.g. 3"/>
+            </div>
+            <div class="col">
+              <label>Metal Extra (Optional)</label>
+              <input id="metalExtra" type="number" step="0.01" placeholder="e.g. Plating/Special Craft"/>
+            </div>
+          </div>
+          <div class="kv"><div class="k">Metal Subtotal (Inc. Loss + Extra)</div><div class="v"><span class="mono" id="metalSub"></span></div></div>
+          <div class="small">Calc: Weight × (1+Loss%) × Price/g + Extra</div>
+        </div>
+
+        <!-- Labor -->
+        <div class="card">
+          <h2>Labor (Design + Mold)</h2>
+          <div class="row">
+            <div class="col"><label>Design Fee</label><input id="designFee" type="number" step="0.01"/></div>
+            <div class="col"><label>Mold Fee</label><input id="moldFee" type="number" step="0.01"/></div>
+          </div>
+          <div class="row">
+            <div class="col"><label>Making/Setting Fee (Optional)</label><input id="makingFee" type="number" step="0.01"/></div>
+            <div class="col"><label>Rework/Buffer (Optional)</label><input id="reworkFee" type="number" step="0.01"/></div>
+          </div>
+          <div class="kv"><div class="k">Labor Subtotal</div><div class="v"><span class="mono" id="laborSub"></span></div></div>
+        </div>
+
+        <!-- Packaging -->
+        <div class="card">
+          <h2>Packaging</h2>
+          <div class="row">
+            <div class="col"><label>Packaging Fee</label><input id="packFee" type="number" step="0.01"/></div>
+            <div class="col"><label>Cert/Tag Fee (Optional)</label><input id="certFee" type="number" step="0.01"/></div>
+          </div>
+          <div class="kv"><div class="k">Packaging Subtotal</div><div class="v"><span class="mono" id="packSub"></span></div></div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div>
+        <div class="card">
+          <h2>Summary & Quote</h2>
+          <div class="kv"><div class="k">Total Cost</div><div class="v total"><span class="mono" id="costTotal"></span></div></div>
+          <hr/>
+          <div class="row">
+            <div class="col">
+              <label>Profit Rate (% Optional)</label>
+              <input id="profitRate" type="number" step="0.01" placeholder="e.g. 20"/>
+            </div>
+            <div class="col">
+              <label>Tax Rate (% Optional)</label>
+              <input id="taxRate" type="number" step="0.01" placeholder="e.g. 8"/>
+            </div>
+          </div>
+          <div class="kv"><div class="k">Final Quote</div><div class="v total"><span class="mono" id="quoteTotal"></span></div></div>
+
+          <div class="btnrow">
+            <button id="btnCopy">Copy Quote</button>
+            <button class="secondary" id="btnReset">Clear</button>
+          </div>
+
+          <div class="notice" style="margin-top:12px">
+            <b>Note:</b> The built-in gem/metal prices are SAMPLES only and do not represent market prices. In actual business, please change the price catalog to your purchase/factory prices, or connect to your internal price list.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Quick Guide</h2>
+          <div class="small">
+            <b>1) Treatment Multiplier:</b> For colored gems Heated/No Heat/Filled etc. (Adjust multipliers in catalog)<br/>
+            <b>2) Diamond Auto Price:</b> Simplified 4C table + Cut/Fluor multiplier (Replace with Rap/Own table)<br/>
+            <b>3) Side Stone Estimate:</b> Diameter(mm) interpolated from common "Round Diamond mm→ct" table; Replace with your own table for strict accuracy.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+  <script>
+    // ---------- DOM bindings ----------
+    const { CATALOG, state, recalc, resetAll, newStoneLine, loadState, copyQuoteText } = window.__JQ;
+
+    // Render function referenced by app.js
+    window.render = function(){
+      // Base
+      document.getElementById("quoteNo").value = state.quoteNo || "";
+      document.getElementById("customerName").value = state.customerName || "";
+      document.getElementById("productName").value = state.productName || "";
+      document.getElementById("currency").value = state.currency || CATALOG.currencyList[0];
+
+      // Stones list
+      const wrap = document.getElementById("stones");
+      wrap.innerHTML = "";
+      state.stones.forEach((s, idx)=>{
+        wrap.appendChild(renderStone(s, idx));
+      });
+
+      // Metal
+      document.getElementById("metalMaterial").value = state.metal.materialKey;
+      document.getElementById("metalWeight").value = state.metal.weightG ?? "";
+      document.getElementById("metalPriceMode").value = String(state.metal.priceMode ?? 0);
+      document.getElementById("metalPpg").value = state.metal.pricePerGram ?? "";
+      document.getElementById("metalLoss").value = state.metal.lossRate ?? "";
+      document.getElementById("metalExtra").value = state.metal.extraFee ?? "";
+
+      // Labor
+      document.getElementById("designFee").value = state.labor.designFee ?? "";
+      document.getElementById("moldFee").value = state.labor.moldFee ?? "";
+      document.getElementById("makingFee").value = state.labor.makingFee ?? "";
+      document.getElementById("reworkFee").value = state.labor.reworkFee ?? "";
+
+      // Pack
+      document.getElementById("packFee").value = state.pack.packFee ?? "";
+      document.getElementById("certFee").value = state.pack.certFee ?? "";
+
+      // Profit/Tax
+      document.getElementById("profitRate").value = state.profitRate ?? "";
+      document.getElementById("taxRate").value = state.taxRate ?? "";
+
+      // Computed
+      document.getElementById("stonesTotal").textContent = `${state.currency} ${window.__JQ.computed.stonesTotal}`;
+      document.getElementById("metalSub").textContent = `${state.currency} ${window.__JQ.computed.metalSub}`;
+      document.getElementById("laborSub").textContent = `${state.currency} ${window.__JQ.computed.laborSub}`;
+      document.getElementById("packSub").textContent = `${state.currency} ${window.__JQ.computed.packSub}`;
+      document.getElementById("costTotal").textContent = `${state.currency} ${window.__JQ.computed.costTotal}`;
+      document.getElementById("quoteTotal").textContent = `${state.currency} ${window.__JQ.computed.quoteTotal}`;
+    };
+
+    function optionHtml(list, selected){
+      return list.map(v=> `<option value="${String(v)}"${String(v)===String(selected)?" selected":""}>${v}</option>`).join("");
+    }
+
+    function renderStone(s, idx){
+      const div = document.createElement("div");
+      div.className = "stone";
+      const isDiamond = s.typeKey==="diamond";
+      const typeOptions = [
+        ...CATALOG.coloredGems.map(g=>({key:g.key, name:g.name})),
+        {key:"diamond", name:CATALOG.diamond.name}
+      ];
+
+      const gem = isDiamond ? null : (CATALOG.coloredGems.find(g=>g.key===s.typeKey) || CATALOG.coloredGems[0]);
+
+      // Build grade options for colored gems
+      const gradeSel = isDiamond ? "" : `
+        <div class="col">
+          <label>Quality Grade</label>
+          <select data-k="gradeIndex" data-idx="${idx}">
+            ${gem.grades.map((g,i)=>`<option value="${i}" ${i===s.gradeIndex?"selected":""}>${g.grade}</option>`).join("")}
+          </select>
+        </div>
+      `;
+
+      // treatment for colored gems
+      const treatSel = isDiamond ? "" : `
+        <div class="col">
+          <label>Treatment (Multiplier)</label>
+          <select data-k="treatmentKey" data-idx="${idx}">
+            ${CATALOG.treatments.map(t=>`<option value="${t.key}" ${t.key===s.treatmentKey?"selected":""}>${t.name} ×${t.mult}</option>`).join("")}
+          </select>
+        </div>
+      `;
+
+      // Diamond 4C block
+      const diamondBlock = isDiamond ? `
+        <div class="row">
+          <div class="col">
+            <label>Color</label>
+            <select data-k="dColor" data-idx="${idx}">
+              ${CATALOG.diamond.colors.map(c=>`<option value="${c}" ${c===s.dColor?"selected":""}>${c}</option>`).join("")}
+            </select>
+          </div>
+          <div class="col">
+            <label>Clarity</label>
+            <select data-k="dClarity" data-idx="${idx}">
+              ${CATALOG.diamond.clarities.map(c=>`<option value="${c}" ${c===s.dClarity?"selected":""}>${c}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Cut (Multiplier)</label>
+            <select data-k="dCutIndex" data-idx="${idx}">
+              ${CATALOG.diamond.cuts.map((c,i)=>`<option value="${i}" ${i===s.dCutIndex?"selected":""}>${c.name} ×${c.mult}</option>`).join("")}
+            </select>
+          </div>
+          <div class="col">
+            <label>Fluor (Multiplier)</label>
+            <select data-k="dFluorIndex" data-idx="${idx}">
+              ${CATALOG.diamond.fluorescence.map((c,i)=>`<option value="${i}" ${i===s.dFluorIndex?"selected":""}>${c.name} ×${c.mult}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+      ` : "";
+
+      // Weight mode and inputs
+      const weightMode = s.weightMode ?? 0;
+      let weightInputs = "";
+      if (weightMode===0){
+        weightInputs = `
+          <div class="row">
+            <div class="col"><label>Total Weight (ct)</label><input data-k="totalCt" data-idx="${idx}" type="number" step="0.01" value="${s.totalCt ?? ""}" placeholder="e.g. 1.25"/></div>
+            <div class="col"><label>Qty (Optional)</label><input data-k="qty" data-idx="${idx}" type="number" step="1" value="${s.qty ?? ""}" placeholder="e.g. 1"/></div>
+          </div>
+        `;
+      } else if (weightMode===1){
+        weightInputs = `
+          <div class="row">
+            <div class="col"><label>Weight Each (ct)</label><input data-k="ctEach" data-idx="${idx}" type="number" step="0.001" value="${s.ctEach ?? ""}" placeholder="e.g. 0.03"/></div>
+            <div class="col"><label>Qty</label><input data-k="qty" data-idx="${idx}" type="number" step="1" value="${s.qty ?? ""}" placeholder="e.g. 50"/></div>
+          </div>
+        `;
+      } else {
+        weightInputs = `
+          <div class="row">
+            <div class="col"><label>Diameter (mm)</label><input data-k="mm" data-idx="${idx}" type="number" step="0.1" value="${s.mm ?? ""}" placeholder="e.g. 1.3"/></div>
+            <div class="col"><label>Qty</label><input data-k="qty" data-idx="${idx}" type="number" step="1" value="${s.qty ?? ""}" placeholder="e.g. 80"/></div>
+          </div>
+          <div class="small">Estimate Logic: Interpolated from common "Round Diamond mm→ct" table, suitable for quick melee quote.</div>
+        `;
+      }
+
+      div.innerHTML = `
+        <div class="stone-head">
+          <div class="badge">
+            <span class="pill">Row ${idx+1}</span>
+            <span class="pill">${CATALOG.stoneRoles[s.roleIndex] || "—"}</span>
+            <span class="pill">${isDiamond ? "Diamond" : "Gem"}</span>
+          </div>
+          <div class="badge">
+            <span class="pill">Subtotal: ${state.currency} <span class="mono">${s.sub}</span></span>
+            ${state.stones.length>1? `<button class="danger" data-act="removeStone" data-idx="${idx}">Remove</button>`:""}
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div class="col">
+            <label>Role</label>
+            <select data-k="roleIndex" data-idx="${idx}">
+              ${CATALOG.stoneRoles.map((r,i)=>`<option value="${i}" ${i===s.roleIndex?"selected":""}>${r}</option>`).join("")}
+            </select>
+          </div>
+          <div class="col">
+            <label>Gem Type</label>
+            <select data-k="typeKey" data-idx="${idx}">
+              ${typeOptions.map(t=>`<option value="${t.key}" ${t.key===s.typeKey?"selected":""}>${t.name}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          ${gradeSel}
+          ${treatSel}
+          <div class="col">
+            <label>Weight Mode</label>
+            <select data-k="weightMode" data-idx="${idx}">
+              ${CATALOG.weightModes.map((m,i)=>`<option value="${i}" ${i===weightMode?"selected":""}>${m}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        ${diamondBlock}
+        ${weightInputs}
+
+        <div class="row">
+          <div class="col">
+            <label>Price Mode</label>
+            <select data-k="priceMode" data-idx="${idx}">
+              ${CATALOG.priceModes.map((m,i)=>`<option value="${i}" ${i===s.priceMode?"selected":""}>${m}</option>`).join("")}
+            </select>
+          </div>
+          <div class="col">
+            <label>Price per ct</label>
+            <input data-k="pricePerCt" data-idx="${idx}" type="number" step="0.01" value="${s.pricePerCt ?? ""}" ${s.priceMode===0 ? "disabled":""}/>
+          </div>
+        </div>
+      `;
+
+      // bind events inside stone
+      div.querySelectorAll("select, input").forEach(el=>{
+        if (!el.dataset.k) return;
+        el.addEventListener("input", onStoneChange);
+        el.addEventListener("change", onStoneChange);
+      });
+      const rm = div.querySelector('button[data-act="removeStone"]');
+      if (rm) rm.addEventListener("click", (e)=>{
+        const i = Number(e.currentTarget.dataset.idx);
+        state.stones.splice(i,1);
+        recalc();
+      });
+      return div;
+    }
+
+    function onStoneChange(e){
+      const idx = Number(e.target.dataset.idx);
+      const k = e.target.dataset.k;
+      let v = e.target.value;
+
+      const s = state.stones[idx];
+
+      if (k==="roleIndex" || k==="weightMode" || k==="priceMode" || k==="gradeIndex" || k==="dCutIndex" || k==="dFluorIndex"){
+        v = Number(v);
+      }
+
+      // if type change -> reset line defaults
+      if (k==="typeKey"){
+        const isDiamond = v==="diamond";
+        // keep roleIndex
+        const roleIndex = s.roleIndex;
+        state.stones[idx] = newStoneLine({ roleIndex, isDiamond });
+        recalc();
+        return;
+      }
+
+      // change
+      s[k]=v;
+
+      // if switching to auto price -> refresh ppc
+      if (k==="priceMode" && v===0){
+        s.pricePerCt = String(window.__JQ.diamondAutoPricePerCt ? window.__JQ.diamondAutoPricePerCt : s.pricePerCt);
+      }
+      recalc();
+    }
+
+    function fillSelects(){
+      // currency
+      const ccy = document.getElementById("currency");
+      ccy.innerHTML = CATALOG.currencyList.map(c=>`<option value="${c}">${c}</option>`).join("");
+
+      // metal
+      const mm = document.getElementById("metalMaterial");
+      mm.innerHTML = CATALOG.metals.map(m=>`<option value="${m.key}">${m.name}</option>`).join("");
+    }
+
+    function bindBase(){
+      document.getElementById("customerName").addEventListener("input", e=>{ state.customerName=e.target.value; recalc(); });
+      document.getElementById("productName").addEventListener("input", e=>{ state.productName=e.target.value; recalc(); });
+      document.getElementById("currency").addEventListener("change", e=>{ state.currency=e.target.value; recalc(); });
+
+      // metal
+      document.getElementById("metalMaterial").addEventListener("change", e=>{ state.metal.materialKey=e.target.value; recalc(); });
+      document.getElementById("metalWeight").addEventListener("input", e=>{ state.metal.weightG=e.target.value; recalc(); });
+      document.getElementById("metalPriceMode").addEventListener("change", e=>{ state.metal.priceMode=Number(e.target.value); recalc(); });
+      document.getElementById("metalPpg").addEventListener("input", e=>{ state.metal.pricePerGram=e.target.value; recalc(); });
+      document.getElementById("metalLoss").addEventListener("input", e=>{ state.metal.lossRate=e.target.value; recalc(); });
+      document.getElementById("metalExtra").addEventListener("input", e=>{ state.metal.extraFee=e.target.value; recalc(); });
+
+      // labor
+      document.getElementById("designFee").addEventListener("input", e=>{ state.labor.designFee=e.target.value; recalc(); });
+      document.getElementById("moldFee").addEventListener("input", e=>{ state.labor.moldFee=e.target.value; recalc(); });
+      document.getElementById("makingFee").addEventListener("input", e=>{ state.labor.makingFee=e.target.value; recalc(); });
+      document.getElementById("reworkFee").addEventListener("input", e=>{ state.labor.reworkFee=e.target.value; recalc(); });
+
+      // pack
+      document.getElementById("packFee").addEventListener("input", e=>{ state.pack.packFee=e.target.value; recalc(); });
+      document.getElementById("certFee").addEventListener("input", e=>{ state.pack.certFee=e.target.value; recalc(); });
+
+      // profit/tax
+      document.getElementById("profitRate").addEventListener("input", e=>{ state.profitRate=e.target.value; recalc(); });
+      document.getElementById("taxRate").addEventListener("input", e=>{ state.taxRate=e.target.value; recalc(); });
+
+      // buttons
+      document.getElementById("btnAddStone").addEventListener("click", ()=>{
+        state.stones.push(newStoneLine({roleIndex:1, isDiamond:false}));
+        recalc();
+      });
+      document.getElementById("btnAddDiamond").addEventListener("click", ()=>{
+        state.stones.push(newStoneLine({roleIndex:1, isDiamond:true}));
+        recalc();
+      });
+
+      document.getElementById("btnCopy").addEventListener("click", copyQuoteText);
+      document.getElementById("btnReset").addEventListener("click", ()=>{ if(confirm("Confirm to clear all data?")) resetAll(); });
+      document.getElementById("btnResetLink").addEventListener("click", (e)=>{ e.preventDefault(); if(confirm("Confirm to clear all data?")) resetAll(); });
+      document.getElementById("btnResetLink").href = "#";
+    }
+
+    // boot
+    fillSelects();
+    bindBase();
+
+    if (!loadState()){
+      state.stones = [newStoneLine({roleIndex:0, isDiamond:false})];
+    }
+    recalc();
+  </script>
+</body>
+</html>
