@@ -16,14 +16,16 @@ export default function AdminPage() {
     const [message, setMessage] = useState('');
     const [activeTab, setActiveTab] = useState<'general' | 'metals' | 'gems'>('general');
 
+    const { t } = useLanguage();
+
     const handleSave = () => {
         updateConfig(localConfig);
-        setMessage('Configuration saved successfully!');
+        setMessage(t.save_success || 'Configuration saved successfully!');
         setTimeout(() => setMessage(''), 3000);
     };
 
     const handleReset = () => {
-        if (confirm('Are you sure you want to reset to default values?')) {
+        if (confirm(t.reset_confirm || 'Are you sure you want to reset to default values?')) {
             resetConfig();
             window.location.reload();
         }
@@ -65,7 +67,7 @@ export default function AdminPage() {
     };
 
     const addGemColor = (gemKey: string, treatmentKey: 'heated' | 'unheated') => {
-        const name = prompt("Enter Color Name (e.g. Royal Blue):");
+        const name = prompt(t.enter_color_name || "Enter Color Name (e.g. Royal Blue):");
         if (!name) return;
         setLocalConfig(prev => {
             const newConfig = { ...prev };
@@ -78,7 +80,7 @@ export default function AdminPage() {
     };
 
     const removeGemColor = (gemKey: string, treatmentKey: 'heated' | 'unheated', index: number) => {
-        if (!confirm("Remove this color?")) return;
+        if (!confirm(t.remove_color_confirm || "Remove this color?")) return;
         setLocalConfig(prev => {
             const newConfig = { ...prev };
             newConfig.mainStones[gemKey].treatments[treatmentKey].colors.splice(index, 1);
@@ -87,13 +89,13 @@ export default function AdminPage() {
     };
 
     return (
-        <div className="container" style={{ maxWidth: 1000, margin: '0 auto', padding: 20 }}>
-            <div className="header" style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="container">
+            <div className="header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Link href="/" className="secondary" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <ArrowLeft size={16} /> Back
+                        <ArrowLeft size={16} /> {t.back || 'Back'}
                     </Link>
-                    <h1>Pricing Configuration (Base: USD)</h1>
+                    <h1 className="h1">{t.pricing_config || 'Pricing Configuration'} <span className="sub">({t.base_usd || 'Base: USD'})</span></h1>
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <button onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')} className="secondary">
@@ -102,62 +104,62 @@ export default function AdminPage() {
                     <ThemeToggle />
                     <button onClick={refreshRates} className="secondary" disabled={isLoading}>
                         <RefreshCw size={16} className={isLoading ? "spin" : ""} />
-                        {isLoading ? " Updating..." : " Refresh Rates"}
+                        {isLoading ? ` ${t.updating || 'Updating...'}` : ` ${t.refresh_rates || 'Refresh Rates'}`}
                     </button>
                     <button onClick={handleReset} className="danger">
-                        <RotateCcw size={16} /> Reset Defaults
+                        <RotateCcw size={16} /> {t.reset_defaults || 'Reset Defaults'}
                     </button>
                     <button onClick={handleSave} className="primary">
-                        <Save size={16} /> Save Changes
+                        <Save size={16} /> {t.save_changes || 'Save Changes'}
                     </button>
                 </div>
             </div>
 
             {lastUpdated && (
-                <div style={{ fontSize: 12, color: '#666', marginBottom: 10, textAlign: 'right' }}>
-                    Currency Rates Last Updated: {new Date(lastUpdated).toLocaleString()}
+                <div className="sub" style={{ textAlign: 'right', marginBottom: 10 }}>
+                    {t.currency_updated || 'Currency Rates Last Updated'}: {new Date(lastUpdated).toLocaleString()}
                 </div>
             )}
 
-            {message && <div style={{ padding: 10, background: '#d4edda', color: '#155724', borderRadius: 4, marginBottom: 20 }}>{message}</div>}
+            {message && <div className="notice pass" style={{ marginBottom: 20 }}>{message}</div>}
 
-            <div className="tabs" style={{ display: 'flex', gap: 10, marginBottom: 20, borderBottom: '1px solid #eee', paddingBottom: 10 }}>
-                <button className={activeTab === 'general' ? 'primary' : 'secondary'} onClick={() => setActiveTab('general')}>General & Small Stones</button>
-                <button className={activeTab === 'metals' ? 'primary' : 'secondary'} onClick={() => setActiveTab('metals')}>Metals</button>
-                <button className={activeTab === 'gems' ? 'primary' : 'secondary'} onClick={() => setActiveTab('gems')}>Main Stones</button>
+            <div className="btnrow" style={{ marginBottom: 20, borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>
+                <button className={activeTab === 'general' ? 'primary' : 'secondary'} onClick={() => setActiveTab('general')}>{t.tab_general || 'General & Small Stones'}</button>
+                <button className={activeTab === 'metals' ? 'primary' : 'secondary'} onClick={() => setActiveTab('metals')}>{t.tab_metals || 'Metals'}</button>
+                <button className={activeTab === 'gems' ? 'primary' : 'secondary'} onClick={() => setActiveTab('gems')}>{t.tab_gems || 'Main Stones'}</button>
             </div>
 
             {activeTab === 'general' && (
                 <>
                     <div className="card">
-                        <h2>Making Fees (USD/item)</h2>
-                        <div className="grid-2">
+                        <h2>{t.making_fees_title || 'Making Fees (USD/item)'}</h2>
+                        <div className="grid">
                             {Object.entries(localConfig.makingFees).map(([key, val]) => (
                                 <div key={key}>
-                                    <label style={{ textTransform: 'capitalize' }}>{key}</label>
+                                    <label style={{ textTransform: 'capitalize' }}>{t[key as keyof typeof t] || key}</label>
                                     <input type="number" value={val} onChange={e => updateMaking(key as any, e.target.value)} />
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="card" style={{ marginTop: 20 }}>
-                        <h2>Small Stones</h2>
+                    <div className="card">
+                        <h2>{t.small_stones_title || 'Small Stones'}</h2>
                         <div className="row">
                             <div className="col">
-                                <label>Diamond Standard (Min)</label>
+                                <label>{t.diamond_std_min || 'Diamond Standard (Min)'}</label>
                                 <input type="number" value={localConfig.smallStones.diamond.standard.min}
                                     onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, min: parseFloat(e.target.value) } } } }))} />
                             </div>
                             <div className="col">
-                                <label>Diamond Standard (Max)</label>
+                                <label>{t.diamond_std_max || 'Diamond Standard (Max)'}</label>
                                 <input type="number" value={localConfig.smallStones.diamond.standard.max}
                                     onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, max: parseFloat(e.target.value) } } } }))} />
                             </div>
                         </div>
                         <div className="row" style={{ marginTop: 10 }}>
                             <div className="col">
-                                <label>Zircon Wax Set</label>
+                                <label>{t.zircon_wax || 'Zircon Wax Set'}</label>
                                 <input type="number" value={localConfig.smallStones.zircon.waxSet}
                                     onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, zircon: { ...prev.smallStones.zircon, waxSet: parseFloat(e.target.value) } } }))} />
                             </div>
@@ -169,27 +171,27 @@ export default function AdminPage() {
             {activeTab === 'metals' && (
                 <>
                     <div className="card">
-                        <h2>Standard Metals</h2>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <h2>{t.standard_metals_title || 'Standard Metals'}</h2>
+                        <table className="table">
                             <thead>
-                                <tr style={{ textAlign: 'left' }}>
-                                    <th>Metal</th>
-                                    <th>Waste %</th>
-                                    <th>Price/g</th>
-                                    <th>Extra Fee</th>
+                                <tr>
+                                    <th>{t.metal_header || 'Metal'}</th>
+                                    <th>{t.waste_header || 'Waste %'}</th>
+                                    <th>{t.price_g_header || 'Price/g'}</th>
+                                    <th>{t.extra_fee_header || 'Extra Fee'}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {Object.entries(localConfig.metals).map(([key, metal]) => (
-                                    <tr key={key} style={{ borderBottom: '1px solid #eee' }}>
-                                        <td style={{ padding: 8 }}>{metal.name}</td>
-                                        <td style={{ padding: 8 }}>
+                                    <tr key={key}>
+                                        <td>{metal.name}</td>
+                                        <td>
                                             <input type="number" value={metal.waste} onChange={e => updateMetal(key, 'waste', e.target.value)} style={{ width: 80 }} />
                                         </td>
-                                        <td style={{ padding: 8 }}>
+                                        <td>
                                             <input type="number" value={metal.price} onChange={e => updateMetal(key, 'price', e.target.value)} style={{ width: 80 }} />
                                         </td>
-                                        <td style={{ padding: 8 }}>
+                                        <td>
                                             <input type="number" value={metal.extraFee} onChange={e => updateMetal(key, 'extraFee', e.target.value)} style={{ width: 80 }} />
                                         </td>
                                     </tr>
@@ -197,11 +199,11 @@ export default function AdminPage() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="card" style={{ marginTop: 20 }}>
-                        <h2>Special Colored Gold</h2>
+                    <div className="card">
+                        <h2>{t.special_colored_gold_title || 'Special Colored Gold'}</h2>
                         <div className="row">
                             <div className="col">
-                                <label>Available Colors (Comma separated)</label>
+                                <label>{t.available_colors || 'Available Colors (Comma separated)'}</label>
                                 <input
                                     type="text"
                                     value={localConfig.coloredGold?.colors.join(", ") || ""}
@@ -209,7 +211,7 @@ export default function AdminPage() {
                                 />
                             </div>
                             <div className="col">
-                                <label>Extra Fee (Added to base gold price)</label>
+                                <label>{t.extra_fee_added || 'Extra Fee (Added to base gold price)'}</label>
                                 <input
                                     type="number"
                                     value={localConfig.coloredGold?.extraFee || 0}
@@ -225,17 +227,17 @@ export default function AdminPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                     {Object.entries(localConfig.mainStones || {}).map(([gemKey, gem]) => (
                         <div key={gemKey} className="card">
-                            <h2 style={{ textTransform: 'capitalize', borderBottom: '1px solid #eee', paddingBottom: 10 }}>{gem.name}</h2>
+                            <h2 style={{ textTransform: 'capitalize', borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>{gem.name}</h2>
 
-                            <div className="grid-2" style={{ gap: 40 }}>
+                            <div className="grid" style={{ gap: 40 }}>
                                 {/* Unheated */}
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                                        <h3>Unheated</h3>
-                                        <button className="small" onClick={() => addGemColor(gemKey, 'unheated')}><Plus size={12} /> Add Color</button>
+                                        <h3>{t.unheated || 'Unheated'}</h3>
+                                        <button className="small" onClick={() => addGemColor(gemKey, 'unheated')}><Plus size={12} /> {t.add_color || 'Add Color'}</button>
                                     </div>
                                     {gem.treatments.unheated.colors.map((color, cIdx) => (
-                                        <div key={cIdx} style={{ marginBottom: 20, background: '#f9f9f9', padding: 10, borderRadius: 8 }}>
+                                        <div key={cIdx} className="stone">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: 5 }}>
                                                 {color.name}
                                                 <button className="danger small" onClick={() => removeGemColor(gemKey, 'unheated', cIdx)}><Trash2 size={12} /></button>
@@ -260,11 +262,11 @@ export default function AdminPage() {
                                 {/* Heated */}
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                                        <h3>Heated</h3>
-                                        <button className="small" onClick={() => addGemColor(gemKey, 'heated')}><Plus size={12} /> Add Color</button>
+                                        <h3>{t.heated || 'Heated'}</h3>
+                                        <button className="small" onClick={() => addGemColor(gemKey, 'heated')}><Plus size={12} /> {t.add_color || 'Add Color'}</button>
                                     </div>
                                     {gem.treatments.heated.colors.map((color, cIdx) => (
-                                        <div key={cIdx} style={{ marginBottom: 20, background: '#f9f9f9', padding: 10, borderRadius: 8 }}>
+                                        <div key={cIdx} className="stone">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: 5 }}>
                                                 {color.name}
                                                 <button className="danger small" onClick={() => removeGemColor(gemKey, 'heated', cIdx)}><Trash2 size={12} /></button>

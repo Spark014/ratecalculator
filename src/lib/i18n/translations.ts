@@ -97,6 +97,45 @@ export const translations = {
         packaging_fee: "Packaging Fee",
         cert_fee_optional: "Cert/Tag Fee (Optional)",
         packaging_subtotal: "Packaging Subtotal",
+
+        // Admin
+        pricing_config: "Pricing Configuration",
+        base_usd: "Base: USD",
+        back: "Back",
+        reset_defaults: "Reset Defaults",
+        save_changes: "Save Changes",
+        currency_updated: "Currency Rates Last Updated",
+        updating: "Updating...",
+        refresh_rates: "Refresh Rates",
+        save_success: "Configuration saved successfully!",
+        reset_confirm: "Are you sure you want to reset to default values?",
+
+        tab_general: "General & Small Stones",
+        tab_metals: "Metals",
+        tab_gems: "Main Stones",
+
+        making_fees_title: "Making Fees (USD/item)",
+        small_stones_title: "Small Stones",
+        diamond_std_min: "Diamond Standard (Min)",
+        diamond_std_max: "Diamond Standard (Max)",
+        zircon_wax: "Zircon Wax Set",
+
+        standard_metals_title: "Standard Metals",
+        special_colored_gold_title: "Special Colored Gold",
+        metal_header: "Metal",
+        waste_header: "Waste %",
+        price_g_header: "Price/g",
+        extra_fee_header: "Extra Fee",
+        available_colors: "Available Colors (Comma separated)",
+        extra_fee_added: "Extra Fee (Added to base gold price)",
+
+        add_color: "Add Color",
+        enter_color_name: "Enter Color Name (e.g. Royal Blue):",
+        remove_color_confirm: "Remove this color?",
+
+
+
+
         // Summary Section
         exchange_rate: "Exchange Rate",
         profit_pct: "Profit %",
@@ -221,6 +260,45 @@ export const translations = {
         packaging_fee: "包装费",
         cert_fee_optional: "证书/吊牌费 (可选)",
         packaging_subtotal: "包装小计",
+
+        // Admin
+        pricing_config: "价格配置",
+        base_usd: "基准: 美元",
+        back: "返回",
+        reset_defaults: "重置默认",
+        save_changes: "保存更改",
+        currency_updated: "汇率最后更新",
+        updating: "更新中...",
+        refresh_rates: "刷新汇率",
+        save_success: "配置保存成功！",
+        reset_confirm: "确定要重置为默认值吗？",
+
+        tab_general: "常规 & 小石头",
+        tab_metals: "金属",
+        tab_gems: "主石",
+
+        making_fees_title: "工费 (美元/件)",
+        small_stones_title: "小石头",
+        diamond_std_min: "标准钻石 (最小)",
+        diamond_std_max: "标准钻石 (最大)",
+        zircon_wax: "锆石蜡镶",
+
+        standard_metals_title: "标准金属",
+        special_colored_gold_title: "特殊彩金",
+        metal_header: "金属",
+        waste_header: "损耗 %",
+        price_g_header: "金价/克",
+        extra_fee_header: "附加费",
+        available_colors: "可用颜色 (逗号分隔)",
+        extra_fee_added: "附加费 (加在基础金价上)",
+
+        add_color: "添加颜色",
+        enter_color_name: "输入颜色名称 (例如: 皇家蓝):",
+        remove_color_confirm: "删除此颜色?",
+
+
+
+
         // Summary Section
         exchange_rate: "汇率",
         profit_pct: "利润 %",
