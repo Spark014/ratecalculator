@@ -2,11 +2,16 @@
 
 import React, { useState } from 'react';
 import { usePricing, PricingConfig } from '@/lib/pricing-context';
+import { useCurrency } from '@/lib/currency-context';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import Link from 'next/link';
-import { ArrowLeft, Save, RotateCcw, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, RotateCcw, Plus, Trash2, RefreshCw } from 'lucide-react';
 
 export default function AdminPage() {
     const { config, updateConfig, resetConfig } = usePricing();
+    const { refreshRates, lastUpdated, isLoading } = useCurrency();
+    const { language, setLanguage } = useLanguage();
     const [localConfig, setLocalConfig] = useState<PricingConfig>(config);
     const [message, setMessage] = useState('');
     const [activeTab, setActiveTab] = useState<'general' | 'metals' | 'gems'>('general');
@@ -88,9 +93,17 @@ export default function AdminPage() {
                     <Link href="/" className="secondary" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                         <ArrowLeft size={16} /> Back
                     </Link>
-                    <h1>Pricing Configuration</h1>
+                    <h1>Pricing Configuration (Base: USD)</h1>
                 </div>
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <button onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')} className="secondary">
+                        {language === 'en' ? '中文' : 'English'}
+                    </button>
+                    <ThemeToggle />
+                    <button onClick={refreshRates} className="secondary" disabled={isLoading}>
+                        <RefreshCw size={16} className={isLoading ? "spin" : ""} />
+                        {isLoading ? " Updating..." : " Refresh Rates"}
+                    </button>
                     <button onClick={handleReset} className="danger">
                         <RotateCcw size={16} /> Reset Defaults
                     </button>
@@ -99,6 +112,12 @@ export default function AdminPage() {
                     </button>
                 </div>
             </div>
+
+            {lastUpdated && (
+                <div style={{ fontSize: 12, color: '#666', marginBottom: 10, textAlign: 'right' }}>
+                    Currency Rates Last Updated: {new Date(lastUpdated).toLocaleString()}
+                </div>
+            )}
 
             {message && <div style={{ padding: 10, background: '#d4edda', color: '#155724', borderRadius: 4, marginBottom: 20 }}>{message}</div>}
 

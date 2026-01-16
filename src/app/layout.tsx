@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { PricingProvider } from "@/lib/pricing-context";
+import { CurrencyProvider } from "@/lib/currency-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <LanguageProvider>
-          <PricingProvider>
-            <ThemeProvider>
-              {children}
-            </ThemeProvider>
-          </PricingProvider>
+          <CurrencyProvider>
+            <PricingProvider>
+              <ThemeProvider>
+                {children}
+              </ThemeProvider>
+            </PricingProvider>
+          </CurrencyProvider>
         </LanguageProvider>
       </body>
     </html>

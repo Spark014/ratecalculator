@@ -149,7 +149,11 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
     }
 }
 
-export function calculateQuote(state: QuoteState, config?: PricingConfig): ComputedValues {
+export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?: { [key: string]: number }): ComputedValues {
+    const { stones, metal, labor, pack, profitRate, taxRate, currency } = state;
+
+    const rate = (rates && rates[currency]) ? rates[currency] : 1;
+
     // stones
     let stonesTotal = 0;
     const stonesWithSub = state.stones.map(line => {
@@ -157,7 +161,10 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig): Compu
         let ppc = num(line.pricePerCt);
 
         if (line.priceMode === 0) {
-            ppc = getStoneAutoPricePerCt(line, config);
+            // Get base price in USD
+            const basePpc = getStoneAutoPricePerCt(line, config);
+            // Convert to target currency
+            ppc = basePpc * rate;
         }
 
         const sub = totalCt * ppc;
@@ -167,8 +174,8 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig): Compu
     stonesTotal = stonesWithSub.reduce((acc, s) => acc + s.sub, 0);
 
     // metal
-    const metal = state.metal;
-    let ppg = num(metal.pricePerGram);
+    const metalDetails = state.metal;
+    let ppg = num(metalDetails.pricePerGram);
     // If auto price mode and config is available, use config price (though UI should have set it)
     // We rely on the UI to set the pricePerGram based on config, but if we wanted to enforce it here:
     // const matConfig = config?.metals[metal.materialKey];
@@ -176,9 +183,9 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig): Compu
     //     ppg = matConfig.price;
     // }
 
-    const loss = num(metal.lossRate) / 100;
+    const loss = num(metalDetails.lossRate) / 100;
     // Formula: Weight * (1 + Waste%) * Price + Extra
-    const metalSub = num(metal.weightG) * (1 + loss) * ppg + num(metal.extraFee);
+    const metalSub = num(metalDetails.weightG) * (1 + loss) * ppg + num(metalDetails.extraFee);
 
     // labor
     const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + num(state.labor.makingFee) + num(state.labor.reworkFee);

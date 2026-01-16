@@ -6,6 +6,7 @@ import {
     getLineTotalCt, getStoneAutoPricePerCt, calculateQuote
 } from '@/lib/calculations';
 import { PricingConfig } from '@/lib/pricing-context';
+import { useCurrency } from '@/lib/currency-context';
 
 const DEFAULT_METAL: Metal = {
     materialKey: CATALOG.metals[0].key,
@@ -48,6 +49,7 @@ export function newStoneLine({ roleIndex = 0, isDiamond = false } = {}): Stone {
 }
 
 export function useQuote(config?: PricingConfig) {
+    const { rates } = useCurrency();
     const [state, setState] = useState<QuoteState>({
         quoteNo: "", // set in useEffect
         customerName: "",
@@ -95,7 +97,7 @@ export function useQuote(config?: PricingConfig) {
     // Recalculate whenever state changes
     useEffect(() => {
         // Calculate using shared logic
-        const newComputed = calculateQuote(state, config);
+        const newComputed = calculateQuote(state, config, rates);
         setComputed(newComputed);
 
         // Save to local storage
@@ -104,7 +106,7 @@ export function useQuote(config?: PricingConfig) {
             localStorage.setItem("jewelry_quote_state_v1", JSON.stringify(state));
         }
 
-    }, [state]);
+    }, [state, config, rates]);
 
     const updateState = useCallback((updates: Partial<QuoteState>) => {
         setState(prev => ({ ...prev, ...updates }));
