@@ -1,6 +1,8 @@
 import React from 'react';
 import { Metal } from '@/lib/types';
 import { CATALOG } from '@/lib/catalog';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { usePricing } from '@/lib/pricing-context';
 
 interface MetalSectionProps {
     metal: Metal;
@@ -10,25 +12,70 @@ interface MetalSectionProps {
 }
 
 export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, currency, onUpdate }) => {
+    const { t } = useLanguage();
+    const { config } = usePricing();
     const handleChange = (field: keyof Metal, value: any) => {
         onUpdate({ [field]: value });
     };
 
+    const isGold = metal.materialKey.includes('18k') || metal.materialKey.includes('14k') || metal.materialKey.includes('9k') || metal.materialKey.includes('24k');
+
     return (
-        <div className="card">
-            <h2>Precious Metal</h2>
-            <div className="row">
+        <div className="section">
+            <h3>{t.metal_details}</h3>
+            <div className="grid-3">
                 <div className="col">
-                    <label>Material</label>
+                    <label>{t.material}</label>
                     <select
                         value={metal.materialKey}
-                        onChange={(e) => handleChange('materialKey', e.target.value)}
+                        onChange={(e) => {
+                            const key = e.target.value;
+                            const m = config.metals[key];
+                            // Auto-update price and waste if metal changes
+                            if (m) {
+                                onUpdate({
+                                    materialKey: key,
+                                    pricePerGram: m.price,
+                                    lossRate: m.waste,
+                                    extraFee: m.extraFee,
+                                    specialColor: undefined // Reset special color on metal change
+                                });
+                            } else {
+                                handleChange('materialKey', key);
+                            }
+                        }}
                     >
-                        {CATALOG.metals.map(m => <option key={m.key} value={m.key}>{m.name}</option>)}
+                        <option value="">{t.select_metal}</option>
+                        {Object.entries(config.metals).map(([k, m]) => (
+                            <option key={k} value={k}>{m.name}</option>
+                        ))}
                     </select>
                 </div>
+
+                {isGold && config.coloredGold && config.coloredGold.colors.length > 0 && (
+                    <div className="col">
+                        <label>Special Color (Optional)</label>
+                        <select
+                            value={metal.specialColor || ""}
+                            onChange={(e) => {
+                                const color = e.target.value;
+                                const baseExtra = config.metals[metal.materialKey]?.extraFee || 0;
+                                const colorExtra = color ? (config.coloredGold?.extraFee || 0) : 0;
+                                onUpdate({
+                                    specialColor: color,
+                                    extraFee: baseExtra + colorExtra
+                                });
+                            }}
+                        >
+                            <option value="">Standard (Yellow/White/Rose)</option>
+                            {config.coloredGold.colors.map(c => (
+                                <option key={c} value={c}>{c} (+{config.coloredGold.extraFee})</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
                 <div className="col">
-                    <label>Weight (g)</label>
+                    <label>{t.weight_g}</label>
                     <input
                         type="number"
                         value={metal.weightG}
@@ -36,7 +83,7 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                     />
                 </div>
                 <div className="col">
-                    <label>Loss Rate (%)</label>
+                    <label>{t.loss_pct}</label>
                     <input
                         type="number"
                         value={metal.lossRate}
@@ -47,16 +94,17 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
             </div>
             <div className="row" style={{ marginTop: 10 }}>
                 <div className="col">
-                    <label>Price Mode</label>
+                    <label>{t.price_mode}</label>
                     <select
                         value={metal.priceMode}
                         onChange={(e) => handleChange('priceMode', parseInt(e.target.value))}
                     >
-                        {CATALOG.priceModes.map((m, i) => <option key={i} value={i}>{m}</option>)}
+                        <option value={0}>{t.auto_price}</option>
+                        <option value={1}>{t.manual_price}</option>
                     </select>
                 </div>
                 <div className="col">
-                    <label>Price/g</label>
+                    <label>{t.gold_price_g}</label>
                     <input
                         type="number"
                         className={metal.priceMode === 0 ? 'mono' : ''}
@@ -67,7 +115,7 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                     />
                 </div>
                 <div className="col">
-                    <label>Extra Fee</label>
+                    <label>{t.extra_fee}</label>
                     <input
                         type="number"
                         value={metal.extraFee}
@@ -76,7 +124,7 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                 </div>
             </div>
             <div className="total" style={{ textAlign: 'right', marginTop: 10 }}>
-                Metal Subtotal: {currency} {subtotal}
+                {t.metal_cost}: {currency} {subtotal}
             </div>
         </div>
     );

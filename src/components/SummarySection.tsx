@@ -2,6 +2,7 @@ import React from 'react';
 import { QuoteState, ComputedValues, Pack } from '@/lib/types';
 import { CATALOG } from '@/lib/catalog';
 import { getLineTotalCt, isDiamondLine, num, money } from '@/lib/calculations';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface SummarySectionProps {
     state: QuoteState;
@@ -11,6 +12,7 @@ interface SummarySectionProps {
 }
 
 export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed, onUpdateRate, onClear }) => {
+    const { t } = useLanguage();
 
     const copyQuote = () => {
         const ccy = state.currency;
@@ -36,41 +38,47 @@ export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed,
         }).join("\n");
 
         const mat = CATALOG.metals.find(m => m.key === state.metal.materialKey) || CATALOG.metals[0];
+        let matName: string = mat.name;
+        if (mat.key === '18k') matName = t.gold_18k;
+        if (mat.key === '14k') matName = t.gold_14k;
+        if (mat.key === 'pt950') matName = t.pt950;
+        if (mat.key === 's925') matName = t.s925;
+
         const text =
-            `Jewelry Quote
-Quote No: ${state.quoteNo}
-Customer: ${state.customerName || "-"}
-Product: ${state.productName || "-"}
-Currency: ${ccy}
+            `${t.title}
+${t.quote_no}: ${state.quoteNo}
+${t.customer}: ${state.customerName || "-"}
+${t.product}: ${state.productName || "-"}
+${t.currency}: ${ccy}
 
-【Gem Details】
+【${t.gem_details}】
 ${lines}
-Gems Total: ${ccy} ${computed.stonesTotal}
+${t.gems_total}: ${ccy} ${computed.stonesTotal}
 
-【Precious Metal】
-Material: ${mat.name}
-Weight(g): ${state.metal.weightG || 0}
-Price/g: ${state.metal.pricePerGram || 0} (${CATALOG.priceModes[state.metal.priceMode] || ""})
-Loss Rate: ${state.metal.lossRate || 0}%
-Extra Fee: ${state.metal.extraFee || 0}
-Metal Subtotal: ${ccy} ${computed.metalSub}
+【${t.metal_details}】
+${t.material}: ${matName}
+${t.weight_g}: ${state.metal.weightG || 0}
+${t.gold_price_g}: ${state.metal.pricePerGram || 0} (${CATALOG.priceModes[state.metal.priceMode] || ""})
+${t.loss_rate}: ${state.metal.lossRate || 0}%
+${t.extra_fee}: ${state.metal.extraFee || 0}
+${t.metal_cost}: ${ccy} ${computed.metalSub}
 
-【Labor】
-Design: ${state.labor.designFee || 0}
-Mold: ${state.labor.moldFee || 0}
-Making: ${state.labor.makingFee || 0}
-Buffer: ${state.labor.reworkFee || 0}
-Labor Subtotal: ${ccy} ${computed.laborSub}
+【${t.labor_details}】
+${t.design_fee}: ${state.labor.designFee || 0}
+${t.mold_fee}: ${state.labor.moldFee || 0}
+${t.making_fee}: ${state.labor.makingFee || 0}
+${t.buffer_fee}: ${state.labor.reworkFee || 0}
+${t.labor_cost}: ${ccy} ${computed.laborSub}
 
-【Packaging】
-Pack Fee: ${state.pack.packFee || 0}
-Cert/Tag: ${state.pack.certFee || 0}
-Pack Subtotal: ${ccy} ${computed.packSub}
+【${t.packaging_details}】
+${t.pack_fee}: ${state.pack.packFee || 0}
+${t.cert_tag}: ${state.pack.certFee || 0}
+${t.packaging_subtotal}: ${ccy} ${computed.packSub}
 
-Total Cost: ${ccy} ${computed.costTotal}
-Profit Rate: ${state.profitRate || 0}%
-Tax Rate: ${state.taxRate || 0}%
-Final Quote: ${ccy} ${computed.quoteTotal}
+${t.total_cost}: ${ccy} ${computed.costTotal}
+${t.profit_pct}: ${state.profitRate || 0}%
+${t.tax_pct}: ${state.taxRate || 0}%
+${t.final_quote}: ${ccy} ${computed.quoteTotal}
 `;
 
         navigator.clipboard.writeText(text).then(() => {
@@ -82,17 +90,17 @@ Final Quote: ${ccy} ${computed.quoteTotal}
 
     return (
         <div className="card">
-            <h2>Summary & Quote</h2>
+            <h2>{t.summary_title}</h2>
 
             <div className="kv" style={{ marginTop: 10 }}>
-                <span className="k">Total Cost</span>
+                <span className="k">{t.total_cost}</span>
             </div>
             <div style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
                 {state.currency} {computed.costTotal}
             </div>
 
             <div className="col" style={{ marginBottom: 10 }}>
-                <label>Profit Rate (% Optional)</label>
+                <label>{t.profit_rate_optional}</label>
                 <input
                     type="number"
                     value={state.profitRate}
@@ -101,7 +109,7 @@ Final Quote: ${ccy} ${computed.quoteTotal}
                 />
             </div>
             <div className="col" style={{ marginBottom: 10 }}>
-                <label>Tax Rate (% Optional)</label>
+                <label>{t.tax_rate_optional}</label>
                 <input
                     type="number"
                     value={state.taxRate}
@@ -111,19 +119,19 @@ Final Quote: ${ccy} ${computed.quoteTotal}
             </div>
 
             <div className="kv" style={{ marginTop: 10 }}>
-                <span className="k">Final Quote</span>
+                <span className="k">{t.final_quote}</span>
             </div>
             <div style={{ fontSize: 24, fontWeight: 'bold', color: 'var(--link)', marginBottom: 20 }}>
                 {state.currency} {computed.quoteTotal}
             </div>
 
             <div className="btnrow">
-                <button onClick={copyQuote}>Copy Quote</button>
-                <button onClick={onClear} className="secondary">Clear</button>
+                <button onClick={copyQuote}>{t.copy_quote}</button>
+                <button onClick={onClear} className="secondary">{t.clear}</button>
             </div>
 
             <div className="notice" style={{ marginTop: 20 }}>
-                <b>Note:</b> The built-in gem/metal prices are SAMPLES only and do not represent market prices. In actual business, please change the price catalog to your purchase/factory prices, or connect to your internal price list.
+                {t.note_content}
             </div>
         </div>
     );

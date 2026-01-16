@@ -13,6 +13,7 @@ export interface Stone {
     // colored gem quality
     gradeIndex: number;
     treatmentKey: string;
+    gemColor?: string; // e.g. "Royal Blue"
 
     // diamond 4C
     dColor: string;
@@ -30,12 +31,14 @@ export interface Metal {
     materialKey: string;
     weightG: string;
     priceMode: number; // 0: auto, 1: manual
-    pricePerGram: string;
-    lossRate: string;
-    extraFee: string;
+    pricePerGram: number;
+    lossRate: number;
+    extraFee: number;
+    specialColor?: string; // e.g. "Purple"
 }
 
 export interface Labor {
+    complexity: 'simple' | 'middle' | 'complicated' | 'superComplicated';
     designFee: string;
     moldFee: string;
     makingFee: string;

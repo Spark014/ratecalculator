@@ -5,17 +5,18 @@ import {
     uid, makeQuoteNo, num, money,
     getLineTotalCt, getStoneAutoPricePerCt, calculateQuote
 } from '@/lib/calculations';
+import { PricingConfig } from '@/lib/pricing-context';
 
 const DEFAULT_METAL: Metal = {
     materialKey: CATALOG.metals[0].key,
     weightG: "",
     priceMode: 0,
-    pricePerGram: String(CATALOG.metals[0].defaultPpg),
-    lossRate: "",
-    extraFee: ""
+    pricePerGram: CATALOG.metals[0].defaultPpg,
+    lossRate: 0,
+    extraFee: 0
 };
 
-const DEFAULT_LABOR: Labor = { designFee: "", moldFee: "", makingFee: "", reworkFee: "" };
+const DEFAULT_LABOR: Labor = { complexity: 'simple', designFee: "", moldFee: "", makingFee: "", reworkFee: "" };
 const DEFAULT_PACK: Pack = { packFee: "", certFee: "" };
 
 export function newStoneLine({ roleIndex = 0, isDiamond = false } = {}): Stone {
@@ -46,7 +47,7 @@ export function newStoneLine({ roleIndex = 0, isDiamond = false } = {}): Stone {
     return line;
 }
 
-export function useQuote() {
+export function useQuote(config?: PricingConfig) {
     const [state, setState] = useState<QuoteState>({
         quoteNo: "", // set in useEffect
         customerName: "",
@@ -94,7 +95,7 @@ export function useQuote() {
     // Recalculate whenever state changes
     useEffect(() => {
         // Calculate using shared logic
-        const newComputed = calculateQuote(state);
+        const newComputed = calculateQuote(state, config);
         setComputed(newComputed);
 
         // Save to local storage
@@ -139,7 +140,7 @@ export function useQuote() {
             currency: CATALOG.currencyList[0],
             stones: [newStoneLine({ roleIndex: 0 })],
             metal: { ...DEFAULT_METAL },
-            labor: { ...DEFAULT_LABOR },
+            labor: { ...DEFAULT_LABOR, complexity: 'simple' },
             pack: { ...DEFAULT_PACK },
             profitRate: "",
             taxRate: ""

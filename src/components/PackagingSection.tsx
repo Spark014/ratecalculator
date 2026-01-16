@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pack } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface PackagingSectionProps {
     pack: Pack;
@@ -9,16 +10,17 @@ interface PackagingSectionProps {
 }
 
 export const PackagingSection: React.FC<PackagingSectionProps> = ({ pack, subtotal, currency, onUpdate }) => {
+    const { t } = useLanguage();
     const handleChange = (field: keyof Pack, value: string) => {
         onUpdate({ [field]: value });
     };
 
     return (
         <div className="card">
-            <h2>Packaging</h2>
+            <h2>{t.packaging_details}</h2>
             <div className="row">
                 <div className="col">
-                    <label>Packaging Fee</label>
+                    <label>{t.packaging_fee}</label>
                     <input
                         type="number"
                         value={pack.packFee}
@@ -26,7 +28,7 @@ export const PackagingSection: React.FC<PackagingSectionProps> = ({ pack, subtot
                     />
                 </div>
                 <div className="col">
-                    <label>Cert/Tag Fee (Optional)</label>
+                    <label>{t.cert_fee_optional}</label>
                     <input
                         type="number"
                         value={pack.certFee}
@@ -35,7 +37,7 @@ export const PackagingSection: React.FC<PackagingSectionProps> = ({ pack, subtot
                 </div>
             </div>
             <div className="total" style={{ textAlign: 'right', marginTop: 10 }}>
-                Packaging Subtotal: {currency} {subtotal}
+                {t.packaging_subtotal}: {currency} {subtotal}
             </div>
         </div>
     );

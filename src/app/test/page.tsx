@@ -93,8 +93,8 @@ export default function TestPage() {
             let state: QuoteState = {
                 quoteNo: "TEST", customerName: "", productName: "", currency: "LKR",
                 stones: [],
-                metal: { materialKey: "18k", weightG: "0", lossRate: "0", priceMode: 0, pricePerGram: "0", extraFee: "0" },
-                labor: { designFee: "0", moldFee: "0", makingFee: "0", reworkFee: "0" },
+                metal: { materialKey: "18k", weightG: "0", lossRate: 0, priceMode: 0, pricePerGram: 0, extraFee: 0 },
+                labor: { complexity: 'simple', designFee: "0", moldFee: "0", makingFee: "0", reworkFee: "0" },
                 pack: { packFee: "0", certFee: "0" },
                 profitRate: "0", taxRate: "0"
             };
@@ -132,8 +132,8 @@ export default function TestPage() {
                     priceMode: 0, pricePerCt: "0", sub: "0"
                 }
             ],
-            metal: { materialKey: "18k", weightG: "5.5", lossRate: "15", priceMode: 0, pricePerGram: "0", extraFee: "50" },
-            labor: { designFee: "100", moldFee: "50", makingFee: "150", reworkFee: "20" },
+            metal: { materialKey: "18k_white", weightG: "5.2", lossRate: 15, priceMode: 0, pricePerGram: 70, extraFee: 0 },
+            labor: { complexity: 'simple', designFee: "100", moldFee: "50", makingFee: "150", reworkFee: "20" },
             pack: { packFee: "30", certFee: "20" },
             profitRate: "20", taxRate: "8"
         };

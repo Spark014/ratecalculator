@@ -1,13 +1,15 @@
 import React from 'react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export const QuickGuide: React.FC = () => {
+    const { t } = useLanguage();
     return (
         <div className="card">
-            <h2>Quick Guide</h2>
+            <h2>{t.guide_title}</h2>
             <div className="small" style={{ lineHeight: 1.6 }}>
-                <b>1) Treatment Multiplier:</b> For colored gems Heated/No Heat/Filled etc. (Adjust multipliers in catalog)<br />
-                <b>2) Diamond Auto Price:</b> Simplified 4C table + Cut/Fluor multiplier (Replace with Rap/Own table)<br />
-                <b>3) Side Stone Estimate:</b> Diameter(mm) interpolated from common "Round Diamond mm→ct" table; Replace with your own table for strict accuracy.
+                <div>{t.guide_step1}</div>
+                <div>{t.guide_step2}</div>
+                <div>{t.guide_step3}</div>
             </div>
         </div>
     );
