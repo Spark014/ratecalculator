@@ -38,7 +38,7 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                                     pricePerGram: m.price,
                                     lossRate: m.waste,
                                     extraFee: m.extraFee,
-                                    specialColor: undefined // Reset special color on metal change
+                                    colorKey: undefined // Reset special color on metal change
                                 });
                             } else {
                                 handleChange('materialKey', key);
@@ -56,13 +56,13 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                     <div className="col">
                         <label>Special Color (Optional)</label>
                         <select
-                            value={metal.specialColor || ""}
+                            value={metal.colorKey || ""}
                             onChange={(e) => {
                                 const color = e.target.value;
                                 const baseExtra = config.metals[metal.materialKey]?.extraFee || 0;
                                 const colorExtra = color ? (config.coloredGold?.extraFee || 0) : 0;
                                 onUpdate({
-                                    specialColor: color,
+                                    colorKey: color as any,
                                     extraFee: baseExtra + colorExtra
                                 });
                             }}
