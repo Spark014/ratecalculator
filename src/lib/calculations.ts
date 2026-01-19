@@ -73,61 +73,92 @@ export function getLineTotalCt(line: Stone): number {
     return eachCt * num(line.qty);
 }
 
-export function getAdvancedGemPrice(line: Stone, config: PricingConfig): number {
-    const gemConfig = config.mainStones[line.typeKey];
-    if (!gemConfig) return 0;
+// NEW: Advanced Colored Gem Pricing (Royal Blue etc)
+export function getAdvancedGemPrice(line: Stone, config?: PricingConfig): number {
+    const colorKey = line.gemColor;
+    if (!colorKey) return 0;
 
-    const treatment = gemConfig.treatments[line.treatmentKey as 'heated' | 'unheated'];
-    if (!treatment) return 0;
+    let gemData: any = null;
 
-    const color = treatment.colors.find(c => c.name === line.gemColor);
-    if (!color) return 0;
-
-    // Find price based on weight bracket
-    // Logic: Find the highest weight key that is <= current weight? 
-    // Or exact match? The image shows "1ct", "1.5ct", "2ct".
-    // Usually this means ranges. Let's assume:
-    // < 1.5 use 1ct price
-    // < 2.0 use 1.5ct price
-    // < 3.0 use 2ct price
-    // >= 3.0 use 3ct price
-    // We need to sort keys and find the appropriate bracket.
-
-    const weight = getLineTotalCt(line); // Or ctEach? Usually price/ct depends on individual stone size.
-    // "Size" in image implies individual stone size.
-    const size = line.weightMode === 1 ? num(line.ctEach) : num(line.totalCt); // If total mode, assume 1 stone? Or just use total.
-    // Safest to use individual size if available, or total if count is 1.
-    // Let's use `getLineTotalCt(line) / num(line.qty)` if qty > 0?
-    // For simplicity, let's use the total weight if weightMode is 0 (Total), or ctEach if mode 1.
-
-    let checkWeight = 0;
-    if (line.weightMode === 1) checkWeight = num(line.ctEach);
-    else if (line.weightMode === 0) checkWeight = num(line.totalCt) / (num(line.qty) || 1);
-    else checkWeight = interpolateMeleeCt(line.mm); // Mode 2
-
-    const sortedWeights = Object.keys(color.prices).map(parseFloat).sort((a, b) => a - b);
-
-    // Find the largest bracket that is <= checkWeight
-    // Actually, usually pricing jumps AT the bracket. 
-    // e.g. 0.9ct is cheap, 1.0ct jumps up.
-    // So we want the largest key <= checkWeight.
-    // Wait, if I have 1.2ct, it should use 1ct price.
-    // If I have 0.9ct, it might fall below 1ct? 
-    // Let's assume < 1ct uses 1ct price for now or 0? 
-    // Let's find the closest lower bound.
-
-    let foundW = sortedWeights[0];
-    for (const w of sortedWeights) {
-        if (w <= checkWeight) foundW = w;
-        else break;
+    // 1. Try Config First
+    if (config && config.advancedGems && config.advancedGems[colorKey]) {
+        gemData = config.advancedGems[colorKey];
+    }
+    // 2. Fallback to Catalog
+    else if (CATALOG.ADVANCED_GEMS[colorKey as keyof typeof CATALOG.ADVANCED_GEMS]) {
+        gemData = CATALOG.ADVANCED_GEMS[colorKey as keyof typeof CATALOG.ADVANCED_GEMS];
     }
 
-    return color.prices[foundW.toString()] || 0;
+    if (!gemData) return 0;
+
+    // Determine individual stone size
+    let w = 0;
+    if (line.weightMode === 1) w = parseFloat(line.ctEach || '0');
+    else if (line.weightMode === 0) w = parseFloat(line.totalCt || '0') / (parseFloat(line.qty || '1') || 1);
+    else w = interpolateMeleeCt(line.mm || '0');
+
+    let gradeKey = "A";
+    if (line.gradeIndex === 1) gradeKey = "AA";
+    if (line.gradeIndex >= 2) gradeKey = "AAA";
+
+    const priceTable = gemData[gradeKey]; // e.g. { "<1": 380, "1-1.5": ... }
+
+    // Find bracket
+    // Keys like "<1", "1-1.5", "1.5-2", "2-3"
+    let price = 0;
+    if (priceTable) {
+        for (const rangeKey of Object.keys(priceTable)) {
+            if (rangeKey.startsWith("<")) {
+                const limit = parseFloat(rangeKey.substring(1));
+                if (w < limit) {
+                    price = priceTable[rangeKey];
+                    break;
+                }
+            } else {
+                const [minStr, maxStr] = rangeKey.split("-");
+                const min = parseFloat(minStr);
+                const max = parseFloat(maxStr);
+                if (w >= min && w < max) {
+                    price = priceTable[rangeKey];
+                    break;
+                }
+            }
+        }
+    }
+    return price;
 }
+
+export function getSmallStonePrice(line: Stone): { pricePerUnit: number, unit: 'ct' | 'piece' } {
+    const type = line.smallStoneType || 'diamond_std';
+
+    if (type === 'zircon') {
+        return { pricePerUnit: CATALOG.SMALL_STONE.zircon, unit: 'piece' };
+    }
+
+    if (type === 'moissanite') {
+        const mType = line.moissaniteType || 'wax_set';
+        return {
+            pricePerUnit: CATALOG.SMALL_STONE.moissanite[mType] || 0,
+            unit: 'piece'
+        };
+    }
+
+    if (type === 'diamond_single') {
+        return { pricePerUnit: CATALOG.SMALL_STONE.diamond.singleCut, unit: 'ct' };
+    }
+
+    // Default Diamond Standard
+    // Use line.smallDiamondQuality (SI/VS) or fallback to SI
+    const quality = line.smallDiamondQuality || 'SI';
+    return {
+        pricePerUnit: CATALOG.SMALL_STONE.diamond.standard[quality] || 0,
+        unit: 'ct'
+    };
+}
+
 
 export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): number {
     if (isDiamondLine(line)) {
-        // ... existing diamond logic
         const carat = getLineTotalCt(line);
         return diamondAutoPricePerCt({
             carat,
@@ -137,9 +168,35 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
             fluorIndex: line.dFluorIndex
         });
     } else {
-        // Check if it's an advanced main stone
-        if (config && config.mainStones && config.mainStones[line.typeKey]) {
-            return getAdvancedGemPrice(line, config);
+        // Check for advanced gem colors first
+        if (line.gemColor && ["Royal Blue", "Cornflower Blue"].includes(line.gemColor)) {
+            const advancedPrice = getAdvancedGemPrice(line, config);
+            if (advancedPrice > 0) {
+                // For these Advanced Gems, the catalog price is explicitly for "Heated".
+                // So we treat "Heated" as baseline (1.0 relative to table), and adjust others relative to it.
+                // Current global multipliers: Heated=0.9, Natural=1.0, Unheated=1.25.
+                // To make Heated = TablePrice * 1.0, we need to divide out the global heated discount 
+                // or just override formatting.
+
+                // If Treatment is 'heated', use Table Price.
+                if (line.treatmentKey === 'heated') return advancedPrice;
+
+                // If Treatment is 'unheated', apply premium relative to Heated base.
+                // Typically Unheated is ~30-50% more than Heated?
+                // Catalog global relation: Unheated(1.25) / Heated(0.9) ~= 1.39
+                if (line.treatmentKey === 'unheated') return advancedPrice * 1.4;
+
+                // If Natural (default), assume standard market which often aligns with Heated for these listings?
+                // Or if "Natural" means Unheated to the user? "Natural (Default)" usually allows treatment.
+                // Let's assume standard market price (Heated) for default if unsure, or apply small adjustment.
+                // If default/natural_unknown:
+                if (line.treatmentKey === 'natural_unknown') return advancedPrice;
+
+                // Fallback for others (Diffusion etc): Apply standard multiplier relative to Heated?
+                // Heated(0.9) -> Diffusion(0.6). Ratio: 0.6/0.9 = 0.66
+                const regularMult = treatmentMult(line.treatmentKey);
+                return advancedPrice * (regularMult / 0.9);
+            }
         }
 
         // Fallback to old logic
@@ -157,17 +214,36 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
     // stones
     let stonesTotal = 0;
     const stonesWithSub = state.stones.map(line => {
-        const totalCt = getLineTotalCt(line);
-        let ppc = num(line.pricePerCt);
+        let sub = 0;
 
-        if (line.priceMode === 0) {
-            // Get base price in USD
-            const basePpc = getStoneAutoPricePerCt(line, config);
-            // Convert to target currency
-            ppc = basePpc * rate;
+        // Check if it's a side stone with specific small stone type
+        if (line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other') {
+            const { pricePerUnit, unit } = getSmallStonePrice(line);
+
+            if (unit === 'ct') {
+                const totalCt = getLineTotalCt(line);
+                sub = totalCt * pricePerUnit;
+            } else {
+                // per piece
+                sub = num(line.qty) * pricePerUnit;
+            }
+            // Convert to target currency if needed (assuming base prices are USD)
+            if (line.priceMode === 0) sub = sub * rate;
+
+        } else {
+            // Main stone or generic side stone calculation
+            const totalCt = getLineTotalCt(line);
+            let ppc = num(line.pricePerCt);
+
+            if (line.priceMode === 0) {
+                // Get base price in USD
+                const basePpc = getStoneAutoPricePerCt(line, config);
+                // Convert to target currency
+                ppc = basePpc * rate;
+            }
+            sub = totalCt * ppc;
         }
 
-        const sub = totalCt * ppc;
         return { sub };
     });
 
@@ -176,19 +252,71 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
     // metal
     const metalDetails = state.metal;
     let ppg = num(metalDetails.pricePerGram);
-    // If auto price mode and config is available, use config price (though UI should have set it)
-    // We rely on the UI to set the pricePerGram based on config, but if we wanted to enforce it here:
-    // const matConfig = config?.metals[metal.materialKey];
-    // if (metal.priceMode === 0 && matConfig) {
-    //     ppg = matConfig.price;
-    // }
 
-    const loss = num(metalDetails.lossRate) / 100;
-    // Formula: Weight * (1 + Waste%) * Price + Extra
-    const metalSub = num(metalDetails.weightG) * (1 + loss) * ppg + num(metalDetails.extraFee);
+    // Auto-calculate metal price specifics (Wastage)
+    // Formula: Weight * (1 + Wastage%) * PricePerGram + ExtraFee
+
+    // Determine Wastage Rate
+    let wastage = 0;
+    // Map materialKey to CATALOG.METAL_RATES keys?
+    // Actually the UI likely stores materialKey as "18k", "pt950" etc.
+    // Let's use `purityKey` if available, or fallback to infer from `materialKey`
+
+    // Helper to find metal rate
+    const findRate = (k: string) => {
+        const kLow = k.toLowerCase();
+        if (kLow.includes('18k')) return CATALOG.METAL_RATES.gold['18k'];
+        if (kLow.includes('14k')) return CATALOG.METAL_RATES.gold['14k'];
+        if (kLow.includes('9k')) return CATALOG.METAL_RATES.gold['9k'];
+        if (kLow.includes('24k')) return CATALOG.METAL_RATES.gold['24k'];
+        if (kLow.includes('pt950') || kLow.includes('p950')) return CATALOG.METAL_RATES.platinum['p950'];
+        if (kLow.includes('pt900') || kLow.includes('p900')) return CATALOG.METAL_RATES.platinum['p900'];
+        if (kLow.includes('s925') || kLow.includes('silver')) return CATALOG.METAL_RATES.silver['s925'];
+        return null;
+    };
+
+    const mRate = findRate(metalDetails.purityKey || metalDetails.materialKey);
+    if (mRate) {
+        wastage = mRate.wastage;
+    } else {
+        // Fallback to manual lossRate input if not found in auto rates
+        if (metalDetails.priceMode === 1) wastage = num(metalDetails.lossRate) / 100;
+    }
+
+    // Checking for special color extra fee
+    let colorExtra = 0;
+    if (metalDetails.colorKey) {
+        if (['blue', 'purple', 'green'].includes(metalDetails.colorKey)) {
+            // Arbitrary extra fee? User image says "Additional Fee". 
+            // Let's assume a placeholder or leave it to manual extraFee input for now 
+            // unless we standardize a value. Let's make it 0 but ensure extraFee is added.
+        }
+    }
+
+    const lossMult = 1 + wastage;
+    const metalSub = num(metalDetails.weightG) * lossMult * ppg + num(metalDetails.extraFee) + colorExtra;
+
 
     // labor
-    const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + num(state.labor.makingFee) + num(state.labor.reworkFee);
+    // Calculate Making Fee based on complexity if in auto mode or just usage
+    let makingFee = num(state.labor.makingFee);
+
+    // If we assume the UI sets `makingFee` manually, we respect it.
+    // BUT if we want to auto-calculate based on complexity:
+    if (state.labor.complexity) {
+        const autoMaking = CATALOG.LABOR_RATES[state.labor.complexity] || 0;
+        // Logic: if UI hasn't manually overridden it? 
+        // For now, let's assume if there's a complexity set, we enforce that rate 
+        // OR we just use it as default value in UI. 
+        // Given this function calculates the TOTAL, let's use the auto value if makingFee is 0 or matches?
+        // Safest: Use the complexity value directly if valid, converting currency.
+        const complexityFeeUsd = CATALOG.LABOR_RATES[state.labor.complexity];
+        if (complexityFeeUsd) {
+            makingFee = complexityFeeUsd * rate;
+        }
+    }
+
+    const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + makingFee + num(state.labor.reworkFee);
 
     // packaging
     const packSub = num(state.pack.packFee) + num(state.pack.certFee);

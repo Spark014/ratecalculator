@@ -33,18 +33,18 @@ export interface PricingConfig {
         colors: string[];
         extraFee: number;
     };
+    advancedGems: {
+        [color: string]: { // "Royal Blue"
+            [grade: string]: { // "AAA", "AA", "A"
+                [bracket: string]: number; // "<1": 380
+            };
+        };
+    };
     mainStones: {
         [key: string]: { // sapphire, ruby, emerald
             name: string;
             treatments: {
-                heated: {
-                    name: string;
-                    colors: {
-                        name: string;
-                        prices: { [weight: string]: number }; // "1": 1000
-                    }[];
-                };
-                unheated: {
+                [key: string]: { // heated, unheated
                     name: string;
                     colors: {
                         name: string;
@@ -61,7 +61,7 @@ const defaultPricing: PricingConfig = {
         simple: 21,
         middle: 33,
         complicated: 45,
-        superComplicated: 60,
+        superComplicated: 70,
     },
     metals: {
         '18k_yellow': { name: '18K Yellow Gold', waste: 15, price: 70, extraFee: 0 },
@@ -79,8 +79,8 @@ const defaultPricing: PricingConfig = {
             standard: { min: 500, max: 800 },
             single: { min: 1500, max: 2200 },
         },
-        zircon: { waxSet: 0.0043 },
-        moissanite: { waxSet: { min: 0.4, max: 0.7 }, handSet: 0.6 },
+        zircon: { waxSet: 0.035 },
+        moissanite: { waxSet: { min: 0.55, max: 0.55 }, handSet: 1.05 },
     },
     packing: {
         defaultFee: 10,
@@ -90,64 +90,42 @@ const defaultPricing: PricingConfig = {
         extraFee: 15
     },
     mainStones: {
-        sapphire: {
-            name: "Blue Sapphire",
-            treatments: {
-                unheated: {
-                    name: "Unheated",
-                    colors: [
-                        { name: "Royal Blue", prices: { "1": 1000, "1.5": 1500, "2": 2500, "3": 4000 } },
-                        { name: "Cornflower Blue", prices: { "1": 800, "1.5": 1200, "2": 2000, "3": 3500 } },
-                        { name: "Light Blue", prices: { "1": 500, "1.5": 700, "2": 1000, "3": 1500 } }
-                    ]
-                },
-                heated: {
-                    name: "Heated",
-                    colors: [
-                        { name: "Royal Blue", prices: { "1": 600, "1.5": 900, "2": 1500, "3": 2500 } },
-                        { name: "Cornflower Blue", prices: { "1": 500, "1.5": 750, "2": 1200, "3": 2000 } },
-                        { name: "Light Blue", prices: { "1": 300, "1.5": 450, "2": 700, "3": 1000 } }
-                    ]
-                }
-            }
-        },
+        // Keep legacy or simply empty if not used, but let's keep for non-advanced fallback
         ruby: {
             name: "Ruby",
             treatments: {
-                unheated: {
-                    name: "Unheated",
-                    colors: [
-                        { name: "Pigeon Blood", prices: { "1": 3000, "1.5": 5000, "2": 8000, "3": 15000 } },
-                        { name: "Red", prices: { "1": 2000, "1.5": 3000, "2": 5000, "3": 9000 } }
-                    ]
-                },
-                heated: {
-                    name: "Heated",
-                    colors: [
-                        { name: "Pigeon Blood", prices: { "1": 1500, "1.5": 2500, "2": 4000, "3": 7000 } },
-                        { name: "Red", prices: { "1": 1000, "1.5": 1500, "2": 2500, "3": 4500 } }
-                    ]
-                }
+                unheated: { name: "Unheated", colors: [] },
+                heated: { name: "Heated", colors: [] }
             }
         },
         emerald: {
             name: "Emerald",
             treatments: {
-                unheated: { // Emeralds are usually oiled, but fitting the structure
-                    name: "No Oil/Minor",
-                    colors: [
-                        { name: "Vivid Green", prices: { "1": 2500, "1.5": 4000, "2": 7000, "3": 12000 } },
-                        { name: "Green", prices: { "1": 1500, "1.5": 2500, "2": 4000, "3": 7000 } }
-                    ]
-                },
-                heated: { // Using 'heated' slot for 'Oiled' conceptually or just generic 'Treated'
-                    name: "Moderate/Significant",
-                    colors: [
-                        { name: "Vivid Green", prices: { "1": 1000, "1.5": 1500, "2": 2500, "3": 4500 } },
-                        { name: "Green", prices: { "1": 600, "1.5": 900, "2": 1500, "3": 2500 } }
-                    ]
-                }
+                unheated: { name: "Minor", colors: [] },
+                heated: { name: "Treated", colors: [] }
             }
+        }
+    },
+    advancedGems: {
+        "Royal Blue": {
+            "AAA": { "<1": 380, "1-1.5": 500, "1.5-2": 700, "2-3": 1400 },
+            "AA": { "<1": 220, "1-1.5": 450, "1.5-2": 500, "2-3": 1100 },
+            "A": { "<1": 150, "1-1.5": 380, "1.5-2": 450, "2-3": 900 }
+        },
+        "Cornflower Blue": {
+            "AAA": { "<1": 200, "1-1.5": 350, "1.5-2": 500, "2-3": 1100 },
+            "AA": { "<1": 150, "1-1.5": 300, "1.5-2": 430, "2-3": 900 },
+            "A": { "<1": 100, "1-1.5": 200, "1.5-2": 300, "2-3": 600 }
+        },
+        "Pigeon Blood": {
+            "AAA": { "<1": 1500, "1-1.5": 2500, "1.5-2": 4000, "2-3": 8000 },
+            "AA": { "<1": 800, "1-1.5": 1500, "1.5-2": 2500, "2-3": 5000 },
+            "A": { "<1": 400, "1-1.5": 800, "1.5-2": 1200, "2-3": 2500 }
+        },
+        "Vivid Green": {
+            "AAA": { "<1": 1200, "1-1.5": 2000, "1.5-2": 3500, "2-3": 6000 },
+            "AA": { "<1": 700, "1-1.5": 1200, "1.5-2": 2000, "2-3": 4000 },
+            "A": { "<1": 300, "1-1.5": 600, "1.5-2": 1000, "2-3": 2000 }
         }
     }
 };

@@ -21,6 +21,12 @@ export interface Stone {
     dCutIndex: number;
     dFluorIndex: number;
 
+    // NEW: Small stone specific types (Diamond vs Zircon etc)
+    smallStoneType?: 'diamond_std' | 'diamond_single' | 'zircon' | 'moissanite' | 'other';
+    // For specialized diamonds (like SI/VS distinction for small stones)
+    smallDiamondQuality?: 'SI' | 'VS';
+    moissaniteType?: 'wax_set' | 'hand_set';
+
     // pricing
     priceMode: number; // 0: auto, 1: manual
     pricePerCt: string;
@@ -34,7 +40,10 @@ export interface Metal {
     pricePerGram: number;
     lossRate: number;
     extraFee: number;
-    specialColor?: string; // e.g. "Purple"
+
+    // NEW: Detailed metal types
+    purityKey?: '9k' | '14k' | '18k' | '24k' | 'p950' | 'p900' | 's925';
+    colorKey?: 'yellow' | 'white' | 'rose' | 'black' | 'purple' | 'blue' | 'green';
 }
 
 export interface Labor {

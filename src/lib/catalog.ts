@@ -5,6 +5,49 @@ export const CATALOG = {
     priceModes: ["Auto Price", "Manual Price"],
     // weightMode: 0 total ct, 1 each*qty, 2 mm*qty estimate (round melee)
     weightModes: ["Total Weight (ct)", "Weight Each × Qty (ct)", "Diameter(mm) × Qty (Est. ct)"],
+
+    // NEW: Pricing Constants (in USD)
+    LABOR_RATES: {
+        simple: 21,
+        middle: 33,
+        complicated: 45,
+        superComplicated: 70
+    },
+
+    METAL_RATES: {
+        gold: {
+            "9k": { wastage: 0.23, purity: 0.375 },
+            "14k": { wastage: 0.17, purity: 0.585 },
+            "18k": { wastage: 0.15, purity: 0.750 },
+            "24k": { wastage: 0.10, purity: 0.999 }
+        },
+        platinum: {
+            "p950": { wastage: 0.30, purity: 0.950 },
+            "p900": { wastage: 0.30, purity: 0.900 }
+        },
+        silver: {
+            "s925": { wastage: 0.0, purity: 0.925 }
+        }
+    },
+
+    // Small stone prices (USD)
+    // Diamond: per carat
+    // Zircon/Moissanite: per piece handling often differs, but spec says "0.03-0.04 USD/Piece" for Zircon
+    SMALL_STONE: {
+        diamond: {
+            standard: {
+                "SI": 600, // per ct
+                "VS": 800  // per ct
+            },
+            singleCut: 300 // per ct (converted from 1500-2200 RMB roughly, or spec says "300 USD/ct" directly? Image says 300 USD/ct)
+        },
+        zircon: 0.035, // USD per piece (avg of 0.03-0.04)
+        moissanite: {
+            "wax_set": 0.55, // USD per piece (avg 0.4-0.7)
+            "hand_set": 1.05 // USD per piece (avg 0.6-1.5)
+        }
+    },
+
     // Treatment multiplier (typical industry handling; adjust to your business rules)
     treatments: [
         { key: "natural_unknown", name: "Natural (Default)", mult: 1.00 },
@@ -18,7 +61,10 @@ export const CATALOG = {
     // Colored gems base price per ct by grade (SAMPLE)
     coloredGems: [
         {
-            key: "sapphire", name: "Sapphire", grades: [
+            key: "sapphire", name: "Sapphire",
+            // New logic will rely on specific color matching dynamically more than this static list, 
+            // but keeping this for fallback.
+            grades: [
                 { grade: "Commercial", p: 120 }, { grade: "AA", p: 260 }, { grade: "AAA", p: 520 }, { grade: "Premium", p: 1200 }
             ]
         },
@@ -43,6 +89,92 @@ export const CATALOG = {
             ]
         }
     ],
+
+    // NEW: Advanced Main Stone Pricing (Royal Blue etc)
+    // Structure: [ColorName][Grade][SizeBracket] -> USD/ct
+    ADVANCED_GEMS: {
+        "Royal Blue": {
+            "AAA": { // Best Quality
+                "<1": 380,
+                "1-1.5": 500,
+                "1.5-2": 700,
+                "2-3": 1400
+            },
+            "AA": { // Front Full Clean
+                "<1": 220,
+                "1-1.5": 450,
+                "1.5-2": 500,
+                "2-3": 1100
+            },
+            "A": { // Little Impurity
+                "<1": 150,
+                "1-1.5": 380,
+                "1.5-2": 450,
+                "2-3": 900
+            }
+        },
+        "Cornflower Blue": {
+            "AAA": {
+                "<1": 200,
+                "1-1.5": 350,
+                "1.5-2": 500,
+                "2-3": 1100
+            },
+            "AA": {
+                "<1": 150,
+                "1-1.5": 300,
+                "1.5-2": 430,
+                "2-3": 900
+            },
+            "A": {
+                "<1": 100,
+                "1-1.5": 200,
+                "1.5-2": 300,
+                "2-3": 600
+            }
+        },
+        "Pigeon Blood": { // Ruby
+            "AAA": {
+                "<1": 1500,
+                "1-1.5": 2500,
+                "1.5-2": 4000,
+                "2-3": 8000
+            },
+            "AA": {
+                "<1": 800,
+                "1-1.5": 1500,
+                "1.5-2": 2500,
+                "2-3": 5000
+            },
+            "A": {
+                "<1": 400,
+                "1-1.5": 800,
+                "1.5-2": 1200,
+                "2-3": 2500
+            }
+        },
+        "Vivid Green": { // Emerald
+            "AAA": {
+                "<1": 1200,
+                "1-1.5": 2000,
+                "1.5-2": 3500,
+                "2-3": 6000
+            },
+            "AA": {
+                "<1": 700,
+                "1-1.5": 1200,
+                "1.5-2": 2000,
+                "2-3": 4000
+            },
+            "A": {
+                "<1": 300,
+                "1-1.5": 600,
+                "1.5-2": 1000,
+                "2-3": 2000
+            }
+        }
+    },
+
     // Diamond price: simplified, by carat bracket + color group + clarity group (SAMPLE, per ct)
     // You should replace with your own market/wholesale pricing rules.
     diamond: {

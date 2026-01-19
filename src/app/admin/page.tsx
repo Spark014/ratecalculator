@@ -159,9 +159,38 @@ export default function AdminPage() {
                         </div>
                         <div className="row" style={{ marginTop: 10 }}>
                             <div className="col">
+                                <label>{t.diamond_single_min || 'Diamond Single Cut (Min)'}</label>
+                                <input type="number" value={localConfig.smallStones.diamond.single.min}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, single: { ...prev.smallStones.diamond.single, min: parseFloat(e.target.value) } } } }))} />
+                            </div>
+                            <div className="col">
+                                <label>{t.diamond_single_max || 'Diamond Single Cut (Max)'}</label>
+                                <input type="number" value={localConfig.smallStones.diamond.single.max}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, single: { ...prev.smallStones.diamond.single, max: parseFloat(e.target.value) } } } }))} />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: 10 }}>
+                            <div className="col">
                                 <label>{t.zircon_wax || 'Zircon Wax Set'}</label>
                                 <input type="number" value={localConfig.smallStones.zircon.waxSet}
                                     onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, zircon: { ...prev.smallStones.zircon, waxSet: parseFloat(e.target.value) } } }))} />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: 10 }}>
+                            <div className="col">
+                                <label>{t.moissanite_wax_min || 'Moissanite Wax Set (Min)'}</label>
+                                <input type="number" value={localConfig.smallStones.moissanite.waxSet.min}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, waxSet: { ...prev.smallStones.moissanite.waxSet, min: parseFloat(e.target.value) } } } }))} />
+                            </div>
+                            <div className="col">
+                                <label>{t.moissanite_wax_max || 'Moissanite Wax Set (Max)'}</label>
+                                <input type="number" value={localConfig.smallStones.moissanite.waxSet.max}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, waxSet: { ...prev.smallStones.moissanite.waxSet, max: parseFloat(e.target.value) } } } }))} />
+                            </div>
+                            <div className="col">
+                                <label>{t.moissanite_hand || 'Moissanite Hand Set'}</label>
+                                <input type="number" value={localConfig.smallStones.moissanite.handSet}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, handSet: parseFloat(e.target.value) } } }))} />
                             </div>
                         </div>
                     </div>
@@ -225,9 +254,59 @@ export default function AdminPage() {
 
             {activeTab === 'gems' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {/* NEW: Advanced Gems Editor */}
+                    <div className="card">
+                        <h2 style={{ borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>Advanced Gems (Sapphire/Ruby/Emerald)</h2>
+                        <p className="sub" style={{ marginBottom: 15 }}>{t.subtitle_note || "Edit pricing for Royal Blue, Pigeon Blood, Vivid Green, etc. Grades: AAA, AA, A. Brackets: <1, 1-1.5, etc."}</p>
+
+                        {localConfig.advancedGems && Object.entries(localConfig.advancedGems).map(([colorKey, grades]) => (
+                            <div key={colorKey} style={{ marginBottom: 30 }}>
+                                <h3 style={{ marginBottom: 10, color: 'var(--primary)' }}>{colorKey}</h3>
+                                <div className="grid">
+                                    {Object.entries(grades).map(([gradeKey, brackets]) => (
+                                        <div key={gradeKey} className="stone">
+                                            <div style={{ fontWeight: 'bold', marginBottom: 10, borderBottom: '1px solid #eee', paddingBottom: 5 }}>
+                                                Grade: {gradeKey}
+                                            </div>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                                {Object.entries(brackets).map(([bracketKey, price]) => (
+                                                    <div key={bracketKey} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                        <span style={{ fontSize: 13, color: '#666' }}>{bracketKey}ct:</span>
+                                                        <input
+                                                            type="number"
+                                                            value={price}
+                                                            onChange={(e) => {
+                                                                const val = parseFloat(e.target.value) || 0;
+                                                                setLocalConfig(prev => ({
+                                                                    ...prev,
+                                                                    advancedGems: {
+                                                                        ...prev.advancedGems,
+                                                                        [colorKey]: {
+                                                                            ...prev.advancedGems[colorKey],
+                                                                            [gradeKey]: {
+                                                                                ...prev.advancedGems[colorKey][gradeKey],
+                                                                                [bracketKey]: val
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }));
+                                                            }}
+                                                            style={{ width: 80, padding: '4px 8px', fontSize: 13 }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Keep Legacy Main Stones for reference or other types */}
                     {Object.entries(localConfig.mainStones || {}).map(([gemKey, gem]) => (
                         <div key={gemKey} className="card">
-                            <h2 style={{ textTransform: 'capitalize', borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>{gem.name}</h2>
+                            <h2 style={{ textTransform: 'capitalize', borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>{gem.name} (Legacy/Generic)</h2>
 
                             <div className="grid" style={{ gap: 40 }}>
                                 {/* Unheated */}
