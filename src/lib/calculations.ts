@@ -216,8 +216,12 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
     const stonesWithSub = state.stones.map(line => {
         let sub = 0;
 
-        // Check if it's a side stone with specific small stone type
-        if (line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other') {
+        // Check if it's a side stone with specific small stone type OR a generic diamond (Main/Side) that uses the simplified logic
+        const isSimplifiedDiamond = line.typeKey === 'diamond';
+        
+        if ((line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other') || isSimplifiedDiamond) {
+            
+            // Re-use small stone pricing logic for simplified Main Diamonds too
             const { pricePerUnit, unit } = getSmallStonePrice(line);
 
             if (unit === 'ct') {

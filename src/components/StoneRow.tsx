@@ -188,56 +188,35 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     </div>
                 ) : isDiamond ? (
                     <div className="row">
-                        <div className="col">
-                            <label>{t.color}</label>
+                         {/* Replace Complex 4C with "Small Stone" style Logic even for Main/Generic "Diamond" type */}
+                         <div className="col">
+                            <label>Diamond Type</label>
                             <select
-                                value={stone.dColor}
-                                onChange={(e) => handleChange('dColor', e.target.value)}
+                                value={stone.smallStoneType || 'diamond_std'}
+                                onChange={(e) => handleChange('smallStoneType', e.target.value)}
                             >
-                                {CATALOG.diamond.colors.map(c => <option key={c} value={c}>{c}</option>)}
+                                <option value="diamond_std">Standard Cut</option>
+                                <option value="diamond_single">Single Refraction/Cut</option>
                             </select>
-                        </div>
-                        <div className="col">
-                            <label>{t.clarity}</label>
-                            <select
-                                value={stone.dClarity}
-                                onChange={(e) => handleChange('dClarity', e.target.value)}
-                            >
-                                {CATALOG.diamond.clarities.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div className="col">
-                            <label>{t.cut}</label>
-                            <select
-                                value={stone.dCutIndex}
-                                onChange={(e) => handleChange('dCutIndex', parseInt(e.target.value))}
-                            >
-                                {CATALOG.diamond.cuts.map((c, i) => {
-                                    let label: string = c.name;
-                                    if (c.name === 'Excellent') label = t.cut_excellent;
-                                    if (c.name === 'Very Good') label = t.cut_very_good;
-                                    if (c.name === 'Good') label = t.cut_good;
-                                    if (c.name === 'Fair') label = t.cut_fair;
-                                    return <option key={i} value={i}>{label}</option>
-                                })}
-                            </select>
-                        </div>
-                        <div className="col">
-                            <label>{t.fluor}</label>
-                            <select
-                                value={stone.dFluorIndex}
-                                onChange={(e) => handleChange('dFluorIndex', parseInt(e.target.value))}
-                            >
-                                {CATALOG.diamond.fluorescence.map((f, i) => {
-                                    let label: string = f.name;
-                                    if (f.name === 'None') label = t.fluor_none;
-                                    if (f.name === 'Faint') label = t.fluor_faint;
-                                    if (f.name === 'Medium') label = t.fluor_medium;
-                                    if (f.name === 'Strong') label = t.fluor_strong;
-                                    return <option key={i} value={i}>{label}</option>
-                                })}
-                            </select>
-                        </div>
+                         </div>
+
+                        {(stone.smallStoneType === 'diamond_std' || !stone.smallStoneType) && (
+                            <div className="col">
+                                <label>Quality</label>
+                                <select 
+                                    value={stone.smallDiamondQuality || 'SI'} 
+                                    onChange={(e) => handleChange('smallDiamondQuality', e.target.value)}
+                                >
+                                    <option value="SI">SI (600 USD/ct)</option>
+                                    <option value="VS">VS (800 USD/ct)</option>
+                                </select>
+                            </div>
+                        )}
+                         {stone.smallStoneType === 'diamond_single' && (
+                            <div className="col" style={{display:'flex', alignItems:'center', marginTop:15, color:'var(--text-weak)'}}>
+                                <i>Price: 300 USD/ct</i>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="row">

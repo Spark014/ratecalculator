@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Metal } from '@/lib/types';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { usePricing } from '@/lib/pricing-context';
+import { CATALOG } from '@/lib/catalog';
+import { RefreshCw } from 'lucide-react';
 
 interface MetalSectionProps {
     metal: Metal;
@@ -13,6 +15,7 @@ interface MetalSectionProps {
 export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, currency, onUpdate }) => {
     const { t } = useLanguage();
     const { config } = usePricing();
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (field: keyof Metal, value: any) => {
         onUpdate({ [field]: value });
@@ -21,16 +24,65 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
     // Sorted keys for display: Silver -> Gold 9k..24k -> Platinum
     const sortedKeys = ['s925', '9k', '14k', '18k', '24k', 'p900', 'p950'];
 
-    const handleRefreshRate = () => {
-        if (metal.materialKey) {
-            const m = config.metals[metal.materialKey];
-            if (m) {
-                onUpdate({
-                    pricePerGram: m.price,
-                    lossRate: m.waste,
-                    extraFee: m.extraFee
-                });
+    const handleRefreshRate = async () => {
+        if (!metal.materialKey) return;
+        const m = config.metals[metal.materialKey];
+        if (!m) return;
+        
+        setLoading(true);
+        try {
+            // Fetch live rates
+            const res = await fetch('/api/gold-price');
+            const data = await res.json();
+            
+            let fetchedPrice = m.price; // Fallback to config
+
+            if (data.success && data.rates) {
+                let purity = 0;
+                let baseRate = 0; // per gram
+
+                // Helper to find metal definition
+                // @ts-ignore
+                if (CATALOG.METAL_RATES.gold[metal.materialKey]) {
+                    // @ts-ignore
+                    purity = CATALOG.METAL_RATES.gold[metal.materialKey].purity;
+                    baseRate = data.rates.gold;
+                }
+                // @ts-ignore
+                else if (CATALOG.METAL_RATES.platinum[metal.materialKey]) {
+                    // @ts-ignore
+                    purity = CATALOG.METAL_RATES.platinum[metal.materialKey].purity;
+                    baseRate = data.rates.platinum;
+                }
+                // @ts-ignore
+                else if (CATALOG.METAL_RATES.silver[metal.materialKey]) {
+                    // @ts-ignore
+                    purity = CATALOG.METAL_RATES.silver[metal.materialKey].purity;
+                    baseRate = data.rates.silver;
+                }
+
+                if (purity && baseRate) {
+                    fetchedPrice = baseRate * purity;
+                }
             }
+
+            // Update state
+            onUpdate({
+                pricePerGram: parseFloat(fetchedPrice.toFixed(2)),
+                lossRate: m.waste,
+                extraFee: m.extraFee
+            });
+
+        } catch (e) {
+            console.error("Rate fetch failed", e);
+            // Even if fail, reset to config defaults if needed
+            onUpdate({
+                pricePerGram: m.price,
+                lossRate: m.waste,
+                extraFee: m.extraFee
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,8 +92,14 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
         <div className="section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3>{t.metal_details}</h3>
-                <button className="secondary small" onClick={handleRefreshRate} style={{ padding: '4px 8px', fontSize: '12px' }}>
-                    Refresh Gold Rate
+                <button 
+                    className="secondary small" 
+                    onClick={handleRefreshRate} 
+                    disabled={loading}
+                    style={{ padding: '4px 8px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 4 }}
+                >
+                    <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+                    {loading ? 'Fetching...' : 'Refresh Live Rate'}
                 </button>
             </div>
             <div className="grid-3">
@@ -109,6 +167,8 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                             type="number"
                             value={metal.pricePerGram}
                             onChange={(e) => handleChange('pricePerGram', e.target.value)}
+                            disabled
+                            style={{ background: 'var(--pill-bg)', cursor: 'not-allowed', color: 'var(--text-main)' }}
                         />
                     </div>
                 </div>
