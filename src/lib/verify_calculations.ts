@@ -20,7 +20,7 @@ const mockMetal: Metal = {
 
 const mockLabor: Labor = {
     complexity: 'complicated', // $45
-    designFee: '0', moldFee: '0', makingFee: '0', reworkFee: '0'
+    makingFee: '0'
 };
 
 const mockPack: Pack = { packFee: '0', certFee: '0' };
