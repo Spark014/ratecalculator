@@ -17,6 +17,8 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
     const { t } = useLanguage();
     const { config } = usePricing();
     const isDiamond = stone.typeKey === 'diamond';
+    // Check if it is a specific small stone (melee) type
+    const isSmallStone = stone.roleIndex === 1 && stone.smallStoneType && stone.smallStoneType !== 'other';
     const isMainStone = ['sapphire', 'ruby', 'emerald'].includes(stone.typeKey);
 
     const handleChange = (field: keyof Stone, value: any) => {
@@ -48,7 +50,25 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     </select>
                 </div>
 
+                {/* NEW: Small Stone Type Selector */}
+                {stone.roleIndex === 1 && (
+                    <div className="col">
+                        <label>Small Stone</label>
+                        <select
+                            value={stone.smallStoneType || 'other'}
+                            onChange={(e) => handleChange('smallStoneType', e.target.value === 'other' ? undefined : e.target.value)}
+                        >
+                            <option value="other">Standard Gem</option>
+                            <option value="diamond_std">Diamond (Standard)</option>
+                            <option value="diamond_single">Diamond (Single Cut)</option>
+                            <option value="zircon">Zircon</option>
+                            <option value="moissanite">Moissanite</option>
+                        </select>
+                    </div>
+                )}
+
                 {/* Type */}
+                {!isSmallStone && (
                 <div className="col">
                     <label>{t.gem_type}</label>
                     {isDiamond ? (
@@ -62,6 +82,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                         </select>
                     )}
                 </div>
+                )}
 
                 {/* Weight Mode */}
                 <div className="col" style={{ flex: 2 }}>
@@ -133,7 +154,39 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
 
             {/* Quality / 4C */}
             <div style={{ background: 'var(--card)', padding: 10, borderRadius: 8, border: '1px solid var(--stone-border)', margin: '10px 0' }}>
-                {isDiamond ? (
+                {isSmallStone ? (
+                     <div className="row">
+                        {stone.smallStoneType === 'diamond_std' && (
+                            <div className="col">
+                                <label>Diamond Quality</label>
+                                <select 
+                                    value={stone.smallDiamondQuality || 'SI'} 
+                                    onChange={(e) => handleChange('smallDiamondQuality', e.target.value)}
+                                >
+                                    <option value="SI">SI</option>
+                                    <option value="VS">VS</option>
+                                </select>
+                            </div>
+                        )}
+                         {stone.smallStoneType === 'moissanite' && (
+                             <div className="col">
+                                 <label>Setting Type</label>
+                                 <select 
+                                     value={stone.moissaniteType || 'wax_set'} 
+                                     onChange={(e) => handleChange('moissaniteType', e.target.value)}
+                                 >
+                                     <option value="wax_set">Wax Set</option>
+                                     <option value="hand_set">Hand Set</option>
+                                 </select>
+                             </div>
+                        )}
+                        {(stone.smallStoneType === 'zircon' || stone.smallStoneType === 'diamond_single') && (
+                            <div className="col" style={{display:'flex', alignItems:'center', marginTop:15, color:'var(--text-weak)'}}>
+                                <i>Standard Pricing</i>
+                            </div>
+                        )}
+                    </div>
+                ) : isDiamond ? (
                     <div className="row">
                         <div className="col">
                             <label>{t.color}</label>

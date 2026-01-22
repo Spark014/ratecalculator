@@ -32,19 +32,19 @@ export const CATALOG = {
 
     // Small stone prices (USD)
     // Diamond: per carat
-    // Zircon/Moissanite: per piece handling often differs, but spec says "0.03-0.04 USD/Piece" for Zircon
+    // Zircon/Moissanite: per piece
     SMALL_STONE: {
         diamond: {
             standard: {
                 "SI": 600, // per ct
                 "VS": 800  // per ct
             },
-            singleCut: 300 // per ct (converted from 1500-2200 RMB roughly, or spec says "300 USD/ct" directly? Image says 300 USD/ct)
+            singleCut: 300 // per ct
         },
-        zircon: 0.035, // USD per piece (avg of 0.03-0.04)
+        zircon: 0.035, // USD per piece (0.03-0.04 avg)
         moissanite: {
-            "wax_set": 0.55, // USD per piece (avg 0.4-0.7)
-            "hand_set": 1.05 // USD per piece (avg 0.6-1.5)
+            "wax_set": 0.55, // USD per piece (0.4-0.7 avg)
+            "hand_set": 1.05 // USD per piece (0.6-1.5 avg)
         }
     },
 
