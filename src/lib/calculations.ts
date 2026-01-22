@@ -128,30 +128,46 @@ export function getAdvancedGemPrice(line: Stone, config?: PricingConfig): number
     return price;
 }
 
-export function getSmallStonePrice(line: Stone): { pricePerUnit: number, unit: 'ct' | 'piece' } {
+export function getSmallStonePrice(line: Stone, config?: PricingConfig): { pricePerUnit: number, unit: 'ct' | 'piece' } {
     const type = line.smallStoneType || 'diamond_std';
 
+    // Use Config values if available, otherwise fallback to CATALOG
+    const zirconPrice = config?.smallStones.zircon ?? CATALOG.SMALL_STONE.zircon;
+    const moissWax = config?.smallStones.moissanite.waxSet ?? CATALOG.SMALL_STONE.moissanite.wax_set;
+    const moissHand = config?.smallStones.moissanite.handSet ?? CATALOG.SMALL_STONE.moissanite.hand_set;
+    
+    // Diamond
+    const diaSingle = config?.smallStones.diamond.single ?? CATALOG.SMALL_STONE.diamond.singleCut;
+    // @ts-ignore
+    const diaSI = config?.smallStones.diamond.standard.SI ?? CATALOG.SMALL_STONE.diamond.standard.SI;
+    // @ts-ignore
+    const diaVS = config?.smallStones.diamond.standard.VS ?? CATALOG.SMALL_STONE.diamond.standard.VS;
+
+
     if (type === 'zircon') {
-        return { pricePerUnit: CATALOG.SMALL_STONE.zircon, unit: 'piece' };
+        return { pricePerUnit: zirconPrice, unit: 'piece' };
     }
 
     if (type === 'moissanite') {
         const mType = line.moissaniteType || 'wax_set';
+        const price = mType === 'wax_set' ? moissWax : moissHand;
         return {
-            pricePerUnit: CATALOG.SMALL_STONE.moissanite[mType] || 0,
+            pricePerUnit: price,
             unit: 'piece'
         };
     }
 
     if (type === 'diamond_single') {
-        return { pricePerUnit: CATALOG.SMALL_STONE.diamond.singleCut, unit: 'ct' };
+        return { pricePerUnit: diaSingle, unit: 'ct' };
     }
 
     // Default Diamond Standard
     // Use line.smallDiamondQuality (SI/VS) or fallback to SI
     const quality = line.smallDiamondQuality || 'SI';
+    const price = quality === 'VS' ? diaVS : diaSI;
+    
     return {
-        pricePerUnit: CATALOG.SMALL_STONE.diamond.standard[quality] || 0,
+        pricePerUnit: price || 0,
         unit: 'ct'
     };
 }
@@ -222,7 +238,7 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
         if ((line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other') || isSimplifiedDiamond) {
             
             // Re-use small stone pricing logic for simplified Main Diamonds too
-            const { pricePerUnit, unit } = getSmallStonePrice(line);
+            const { pricePerUnit, unit } = getSmallStonePrice(line, config);
 
             if (unit === 'ct') {
                 const totalCt = getLineTotalCt(line);

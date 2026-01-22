@@ -19,11 +19,11 @@ export interface PricingConfig {
     };
     smallStones: {
         diamond: {
-            standard: { min: number; max: number };
-            single: { min: number; max: number };
+            standard: { SI: number; VS: number };
+            single: number;
         };
-        zircon: { waxSet: number };
-        moissanite: { waxSet: { min: number; max: number }; handSet: number };
+        zircon: number;
+        moissanite: { waxSet: number; handSet: number };
     };
     packing: {
         defaultFee: number;
@@ -74,11 +74,11 @@ const defaultPricing: PricingConfig = {
     },
     smallStones: {
         diamond: {
-            standard: { min: 500, max: 800 },
-            single: { min: 1500, max: 2200 },
+            standard: { SI: 600, VS: 800 },
+            single: 300,
         },
-        zircon: { waxSet: 0.035 },
-        moissanite: { waxSet: { min: 0.55, max: 0.55 }, handSet: 1.05 },
+        zircon: 0.035,
+        moissanite: { waxSet: 0.55, handSet: 1.05 },
     },
     packing: {
         defaultFee: 10,

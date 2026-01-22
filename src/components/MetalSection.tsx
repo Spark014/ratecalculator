@@ -16,6 +16,9 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
     const { t } = useLanguage();
     const { config } = usePricing();
     const [loading, setLoading] = useState(false);
+    
+    // Store latest fetched market rates (per gram 24k/pure) to strictly enforce across metal changes
+    const [cachedRates, setCachedRates] = useState<{ gold: number; platinum: number; silver: number } | null>(null);
 
     const handleChange = (field: keyof Metal, value: any) => {
         onUpdate({ [field]: value });
@@ -24,63 +27,60 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
     // Sorted keys for display: Silver -> Gold 9k..24k -> Platinum
     const sortedKeys = ['s925', '9k', '14k', '18k', '24k', 'p900', 'p950'];
 
+    const calculatePriceFromRates = (key: string, rates: { gold: number; platinum: number; silver: number }) => {
+        let purity = 0;
+        let baseRate = 0;
+
+        // @ts-ignore
+        if (CATALOG.METAL_RATES.gold[key]) {
+            // @ts-ignore
+            purity = CATALOG.METAL_RATES.gold[key].purity;
+            baseRate = rates.gold;
+        }
+        // @ts-ignore
+        else if (CATALOG.METAL_RATES.platinum[key]) {
+            // @ts-ignore
+            purity = CATALOG.METAL_RATES.platinum[key].purity;
+            baseRate = rates.platinum;
+        }
+        // @ts-ignore
+        else if (CATALOG.METAL_RATES.silver[key]) {
+            // @ts-ignore
+            purity = CATALOG.METAL_RATES.silver[key].purity;
+            baseRate = rates.silver;
+        }
+
+        if (purity && baseRate) {
+            return parseFloat((baseRate * purity).toFixed(2));
+        }
+        return null;
+    };
+
     const handleRefreshRate = async () => {
-        if (!metal.materialKey) return;
-        const m = config.metals[metal.materialKey];
-        if (!m) return;
-        
         setLoading(true);
         try {
-            // Fetch live rates
             const res = await fetch('/api/gold-price');
             const data = await res.json();
-            
-            let fetchedPrice = m.price; // Fallback to config
 
             if (data.success && data.rates) {
-                let purity = 0;
-                let baseRate = 0; // per gram
-
-                // Helper to find metal definition
-                // @ts-ignore
-                if (CATALOG.METAL_RATES.gold[metal.materialKey]) {
-                    // @ts-ignore
-                    purity = CATALOG.METAL_RATES.gold[metal.materialKey].purity;
-                    baseRate = data.rates.gold;
-                }
-                // @ts-ignore
-                else if (CATALOG.METAL_RATES.platinum[metal.materialKey]) {
-                    // @ts-ignore
-                    purity = CATALOG.METAL_RATES.platinum[metal.materialKey].purity;
-                    baseRate = data.rates.platinum;
-                }
-                // @ts-ignore
-                else if (CATALOG.METAL_RATES.silver[metal.materialKey]) {
-                    // @ts-ignore
-                    purity = CATALOG.METAL_RATES.silver[metal.materialKey].purity;
-                    baseRate = data.rates.silver;
-                }
-
-                if (purity && baseRate) {
-                    fetchedPrice = baseRate * purity;
+                setCachedRates(data.rates);
+                
+                // If a metal is currently selected, update it immediately
+                if (metal.materialKey) {
+                    const m = config.metals[metal.materialKey]; // Get default wastage/loss
+                    const newPrice = calculatePriceFromRates(metal.materialKey, data.rates);
+                    
+                    if (newPrice !== null && m) {
+                        onUpdate({
+                            pricePerGram: newPrice,
+                            lossRate: m.waste,
+                            extraFee: m.extraFee
+                        });
+                    }
                 }
             }
-
-            // Update state
-            onUpdate({
-                pricePerGram: parseFloat(fetchedPrice.toFixed(2)),
-                lossRate: m.waste,
-                extraFee: m.extraFee
-            });
-
         } catch (e) {
             console.error("Rate fetch failed", e);
-            // Even if fail, reset to config defaults if needed
-            onUpdate({
-                pricePerGram: m.price,
-                lossRate: m.waste,
-                extraFee: m.extraFee
-            });
         } finally {
             setLoading(false);
         }
@@ -110,11 +110,18 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                         onChange={(e) => {
                             const key = e.target.value;
                             const m = config.metals[key];
-                            // Auto-update price and waste if metal changes
+                            
                             if (m) {
+                                let newPrice = m.price;
+                                // If we have cached live rates, use them instead of config default
+                                if (cachedRates) {
+                                    const calc = calculatePriceFromRates(key, cachedRates);
+                                    if (calc !== null) newPrice = calc;
+                                }
+
                                 onUpdate({
                                     materialKey: key,
-                                    pricePerGram: m.price,
+                                    pricePerGram: newPrice,
                                     lossRate: m.waste,
                                     extraFee: m.extraFee,
                                     colorKey: undefined

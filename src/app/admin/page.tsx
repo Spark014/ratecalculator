@@ -179,48 +179,38 @@ export default function AdminPage() {
                         <h2>{t.small_stones_title || 'Small Stones'}</h2>
                         <div className="row">
                             <div className="col">
-                                <label>{t.diamond_std_min || 'Diamond Standard (Min)'}</label>
-                                <input type="number" value={localConfig.smallStones.diamond.standard.min}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, min: parseFloat(e.target.value) } } } }))} />
+                                <label>Diamond Standard (SI) - USD/ct</label>
+                                <input type="number" value={localConfig.smallStones.diamond.standard.SI}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, SI: parseFloat(e.target.value) } } } }))} />
                             </div>
                             <div className="col">
-                                <label>{t.diamond_std_max || 'Diamond Standard (Max)'}</label>
-                                <input type="number" value={localConfig.smallStones.diamond.standard.max}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, max: parseFloat(e.target.value) } } } }))} />
-                            </div>
-                        </div>
-                        <div className="row" style={{ marginTop: 10 }}>
-                            <div className="col">
-                                <label>{t.diamond_single_min || 'Diamond Single Cut (Min)'}</label>
-                                <input type="number" value={localConfig.smallStones.diamond.single.min}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, single: { ...prev.smallStones.diamond.single, min: parseFloat(e.target.value) } } } }))} />
-                            </div>
-                            <div className="col">
-                                <label>{t.diamond_single_max || 'Diamond Single Cut (Max)'}</label>
-                                <input type="number" value={localConfig.smallStones.diamond.single.max}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, single: { ...prev.smallStones.diamond.single, max: parseFloat(e.target.value) } } } }))} />
+                                <label>Diamond Standard (VS) - USD/ct</label>
+                                <input type="number" value={localConfig.smallStones.diamond.standard.VS}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, standard: { ...prev.smallStones.diamond.standard, VS: parseFloat(e.target.value) } } } }))} />
                             </div>
                         </div>
                         <div className="row" style={{ marginTop: 10 }}>
                             <div className="col">
-                                <label>{t.zircon_wax || 'Zircon Wax Set'}</label>
-                                <input type="number" value={localConfig.smallStones.zircon.waxSet}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, zircon: { ...prev.smallStones.zircon, waxSet: parseFloat(e.target.value) } } }))} />
+                                <label>Diamond Single Refraction/Cut - USD/ct</label>
+                                <input type="number" value={localConfig.smallStones.diamond.single}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, diamond: { ...prev.smallStones.diamond, single: parseFloat(e.target.value) } } }))} />
                             </div>
                         </div>
                         <div className="row" style={{ marginTop: 10 }}>
                             <div className="col">
-                                <label>{t.moissanite_wax_min || 'Moissanite Wax Set (Min)'}</label>
-                                <input type="number" value={localConfig.smallStones.moissanite.waxSet.min}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, waxSet: { ...prev.smallStones.moissanite.waxSet, min: parseFloat(e.target.value) } } } }))} />
+                                <label>{t.zircon_wax || 'Zircon Wax Set'} (USD/Piece)</label>
+                                <input type="number" value={localConfig.smallStones.zircon}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, zircon: parseFloat(e.target.value) } }))} />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: 10 }}>
+                            <div className="col">
+                                <label>{t.moissanite_wax || 'Moissanite Wax Set'} (USD/Piece)</label>
+                                <input type="number" value={localConfig.smallStones.moissanite.waxSet}
+                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, waxSet: parseFloat(e.target.value) } } }))} />
                             </div>
                             <div className="col">
-                                <label>{t.moissanite_wax_max || 'Moissanite Wax Set (Max)'}</label>
-                                <input type="number" value={localConfig.smallStones.moissanite.waxSet.max}
-                                    onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, waxSet: { ...prev.smallStones.moissanite.waxSet, max: parseFloat(e.target.value) } } } }))} />
-                            </div>
-                            <div className="col">
-                                <label>{t.moissanite_hand || 'Moissanite Hand Set'}</label>
+                                <label>{t.moissanite_hand || 'Moissanite Hand Set'} (USD/Piece)</label>
                                 <input type="number" value={localConfig.smallStones.moissanite.handSet}
                                     onChange={e => setLocalConfig(prev => ({ ...prev, smallStones: { ...prev.smallStones, moissanite: { ...prev.smallStones.moissanite, handSet: parseFloat(e.target.value) } } }))} />
                             </div>
