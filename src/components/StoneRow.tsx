@@ -58,9 +58,9 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                             value={stone.smallStoneType || 'other'}
                             onChange={(e) => handleChange('smallStoneType', e.target.value === 'other' ? undefined : e.target.value)}
                         >
-                            <option value="other">Standard Gem</option>
-                            <option value="diamond_std">Diamond (Standard)</option>
-                            <option value="diamond_single">Diamond (Single Cut)</option>
+                            <option value="other">None (Standard Gem)</option>
+                            <option value="diamond_std">Diamond - Standard Cut</option>
+                            <option value="diamond_single">Diamond - Single Refraction/Cut</option>
                             <option value="zircon">Zircon</option>
                             <option value="moissanite">Moissanite</option>
                         </select>
@@ -158,13 +158,13 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                      <div className="row">
                         {stone.smallStoneType === 'diamond_std' && (
                             <div className="col">
-                                <label>Diamond Quality</label>
+                                <label>Quality (Clarities)</label>
                                 <select 
                                     value={stone.smallDiamondQuality || 'SI'} 
                                     onChange={(e) => handleChange('smallDiamondQuality', e.target.value)}
                                 >
-                                    <option value="SI">SI</option>
-                                    <option value="VS">VS</option>
+                                    <option value="SI">SI (600 USD/ct)</option>
+                                    <option value="VS">VS (800 USD/ct)</option>
                                 </select>
                             </div>
                         )}
