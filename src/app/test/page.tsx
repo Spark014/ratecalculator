@@ -133,7 +133,7 @@ export default function TestPage() {
                 }
             ],
             metal: { materialKey: "18k_white", weightG: "5.2", lossRate: 15, priceMode: 0, pricePerGram: 70, extraFee: 0 },
-            labor: { complexity: 'simple', designFee: "100", moldFee: "50", makingFee: "150", reworkFee: "20" },
+            labor: { complexity: 'simple', makingFee: "150" },
             pack: { packFee: "30", certFee: "20" },
             profitRate: "20", taxRate: "8"
         };
