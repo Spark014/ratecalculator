@@ -260,11 +260,26 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                     <option value="">Select Color</option>
                                     {config.advancedGems && Object.keys(config.advancedGems)
                                         .filter(colorName => {
-                                            // Filter colors based on Gem Type
-                                            if (stone.typeKey === 'sapphire') return ['Royal Blue', 'Cornflower Blue'].includes(colorName);
-                                            if (stone.typeKey === 'ruby') return ['Pigeon Blood'].includes(colorName);
-                                            if (stone.typeKey === 'emerald') return ['Vivid Green'].includes(colorName);
-                                            return true; // Fallback for others
+                                            // Filter colors based on Gem Type (Strict Association)
+                                            const type = stone.typeKey?.toLowerCase().trim();
+                                            const color = colorName.trim();
+                                            
+                                            // 1. Sapphire
+                                            if (type === 'sapphire') {
+                                                return ['Royal Blue', 'Cornflower Blue', 'Light Blue'].includes(color);
+                                            }
+                                            // 2. Ruby
+                                            if (type === 'ruby') {
+                                                return ['Pigeon Blood'].includes(color);
+                                            }
+                                            // 3. Emerald
+                                            if (type === 'emerald') {
+                                                return ['Vivid Green'].includes(color);
+                                            }
+
+                                            // 4. Default / Fallback for other gems
+                                            // If key matches generic colors, maybe show them? For now, show none strict.
+                                            return false; 
                                         })
                                         .map(c => (
                                             <option key={c} value={c}>{c}</option>

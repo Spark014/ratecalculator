@@ -65,27 +65,27 @@ export const CATALOG = {
             // New logic will rely on specific color matching dynamically more than this static list, 
             // but keeping this for fallback.
             grades: [
-                { grade: "Commercial", p: 120 }, { grade: "AA", p: 260 }, { grade: "AAA", p: 520 }, { grade: "Premium", p: 1200 }
+                { grade: "A", p: 120 }, { grade: "AA", p: 260 }, { grade: "AAA", p: 520 }, { grade: "Premium", p: 1200 }
             ]
         },
         {
             key: "ruby", name: "Ruby", grades: [
-                { grade: "Commercial", p: 180 }, { grade: "AA", p: 420 }, { grade: "AAA", p: 900 }, { grade: "Premium", p: 2200 }
+                { grade: "A", p: 180 }, { grade: "AA", p: 420 }, { grade: "AAA", p: 900 }, { grade: "Premium", p: 2200 }
             ]
         },
         {
             key: "emerald", name: "Emerald", grades: [
-                { grade: "Commercial", p: 160 }, { grade: "AA", p: 380 }, { grade: "AAA", p: 850 }, { grade: "Premium", p: 2000 }
+                { grade: "A", p: 160 }, { grade: "AA", p: 380 }, { grade: "AAA", p: 850 }, { grade: "Premium", p: 2000 }
             ]
         },
         {
             key: "spinel", name: "Spinel", grades: [
-                { grade: "Commercial", p: 90 }, { grade: "AA", p: 220 }, { grade: "AAA", p: 480 }, { grade: "Premium", p: 900 }
+                { grade: "A", p: 90 }, { grade: "AA", p: 220 }, { grade: "AAA", p: 480 }, { grade: "Premium", p: 900 }
             ]
         },
         {
             key: "tourmaline", name: "Tourmaline", grades: [
-                { grade: "Commercial", p: 60 }, { grade: "AA", p: 140 }, { grade: "AAA", p: 320 }, { grade: "Premium", p: 800 }
+                { grade: "A", p: 60 }, { grade: "AA", p: 140 }, { grade: "AAA", p: 320 }, { grade: "Premium", p: 800 }
             ]
         }
     ],
@@ -131,6 +131,27 @@ export const CATALOG = {
                 "1-1.5": 200,
                 "1.5-2": 300,
                 "2-3": 600
+            }
+        },
+        "Light Blue": {
+            // Placeholder prices for logic structure
+            "AAA": {
+                "<1": 150,
+                "1-1.5": 250,
+                "1.5-2": 400,
+                "2-3": 800
+            },
+            "AA": {
+                "<1": 100,
+                "1-1.5": 200,
+                "1.5-2": 350,
+                "2-3": 700
+            },
+            "A": {
+                "<1": 80,
+                "1-1.5": 150,
+                "1.5-2": 250,
+                "2-3": 500
             }
         },
         "Pigeon Blood": { // Ruby

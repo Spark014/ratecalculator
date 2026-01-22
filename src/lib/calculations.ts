@@ -185,7 +185,7 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
         });
     } else {
         // Check for advanced gem colors first
-        if (line.gemColor && ["Royal Blue", "Cornflower Blue"].includes(line.gemColor)) {
+        if (line.gemColor) {
             const advancedPrice = getAdvancedGemPrice(line, config);
             if (advancedPrice > 0) {
                 // For these Advanced Gems, the catalog price is explicitly for "Heated".
@@ -197,10 +197,8 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
                 // If Treatment is 'heated', use Table Price.
                 if (line.treatmentKey === 'heated') return advancedPrice;
 
-                // If Treatment is 'unheated', apply premium relative to Heated base.
-                // Typically Unheated is ~30-50% more than Heated?
-                // Catalog global relation: Unheated(1.25) / Heated(0.9) ~= 1.39
-                if (line.treatmentKey === 'unheated') return advancedPrice * 1.4;
+                // 2026-01-22 Update: User requested Heated and Unheated to be the SAME price for now.
+                if (line.treatmentKey === 'unheated') return advancedPrice;
 
                 // If Natural (default), assume standard market which often aligns with Heated for these listings?
                 // Or if "Natural" means Unheated to the user? "Natural (Default)" usually allows treatment.
