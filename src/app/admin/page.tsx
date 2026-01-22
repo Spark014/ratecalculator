@@ -88,6 +88,38 @@ export default function AdminPage() {
         });
     };
 
+    // --- New Advanced Gem Helpers (Top Level) ---
+    const addAdvancedColor = () => {
+        const name = prompt(t.enter_color_name || "Enter Color Name (e.g. Vivid Green):");
+        if (!name) return;
+        if (localConfig.advancedGems && localConfig.advancedGems[name]) {
+            alert("Color already exists");
+            return;
+        }
+        setLocalConfig(prev => ({
+            ...prev,
+            advancedGems: {
+                ...prev.advancedGems,
+                [name]: {
+                    "AAA": { "<1": 0, "1-1.5": 0, "1.5-2": 0, "2-3": 0 },
+                    "AA": { "<1": 0, "1-1.5": 0, "1.5-2": 0, "2-3": 0 },
+                    "A": { "<1": 0, "1-1.5": 0, "1.5-2": 0, "2-3": 0 }
+                }
+            }
+        }));
+    };
+
+    const removeAdvancedColor = (name: string) => {
+        if (!confirm(t.remove_color_confirm || "Remove this color?")) return;
+        setLocalConfig(prev => {
+            const newGems = { ...prev.advancedGems };
+            delete newGems[name];
+            return { ...prev, advancedGems: newGems };
+        });
+    };
+
+    const sortedMetalKeys = ['s925', '9k', '14k', '18k', '24k'];
+
     return (
         <div className="container">
             <div className="header">
@@ -211,20 +243,23 @@ export default function AdminPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.entries(localConfig.metals).map(([key, metal]) => (
-                                    <tr key={key}>
-                                        <td>{metal.name}</td>
-                                        <td>
-                                            <input type="number" value={metal.waste} onChange={e => updateMetal(key, 'waste', e.target.value)} style={{ width: 80 }} />
-                                        </td>
-                                        <td>
-                                            <input type="number" value={metal.price} onChange={e => updateMetal(key, 'price', e.target.value)} style={{ width: 80 }} />
-                                        </td>
-                                        <td>
-                                            <input type="number" value={metal.extraFee} onChange={e => updateMetal(key, 'extraFee', e.target.value)} style={{ width: 80 }} />
-                                        </td>
-                                    </tr>
-                                ))}
+                                {sortedMetalKeys.filter(k => localConfig.metals[k]).map(key => {
+                                    const metal = localConfig.metals[key];
+                                    return (
+                                        <tr key={key}>
+                                            <td>{metal.name}</td>
+                                            <td>
+                                                <input type="number" value={metal.waste} onChange={e => updateMetal(key, 'waste', e.target.value)} style={{ width: 80 }} />
+                                            </td>
+                                            <td>
+                                                <input type="number" value={metal.price} onChange={e => updateMetal(key, 'price', e.target.value)} style={{ width: 80 }} />
+                                            </td>
+                                            <td>
+                                                <input type="number" value={metal.extraFee} onChange={e => updateMetal(key, 'extraFee', e.target.value)} style={{ width: 80 }} />
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -256,12 +291,18 @@ export default function AdminPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                     {/* NEW: Advanced Gems Editor */}
                     <div className="card">
-                        <h2 style={{ borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>Advanced Gems (Sapphire/Ruby/Emerald)</h2>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--table-border)', paddingBottom: 10 }}>
+                            <h2>Advanced Gems (Sapphire/Ruby/Emerald)</h2>
+                            <button className="small" onClick={addAdvancedColor}><Plus size={12} /> Add Color</button>
+                        </div>
                         <p className="sub" style={{ marginBottom: 15 }}>{t.subtitle_note || "Edit pricing for Royal Blue, Pigeon Blood, Vivid Green, etc. Grades: AAA, AA, A. Brackets: <1, 1-1.5, etc."}</p>
 
                         {localConfig.advancedGems && Object.entries(localConfig.advancedGems).map(([colorKey, grades]) => (
                             <div key={colorKey} style={{ marginBottom: 30 }}>
-                                <h3 style={{ marginBottom: 10, color: 'var(--primary)' }}>{colorKey}</h3>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                    <h3 style={{ color: 'var(--primary)' }}>{colorKey}</h3>
+                                    <button className="danger small" onClick={() => removeAdvancedColor(colorKey)}><Trash2 size={12} /> Remove</button>
+                                </div>
                                 <div className="grid">
                                     {Object.entries(grades).map(([gradeKey, brackets]) => (
                                         <div key={gradeKey} className="stone">

@@ -94,7 +94,7 @@ export default function TestPage() {
                 quoteNo: "TEST", customerName: "", productName: "", currency: "LKR",
                 stones: [],
                 metal: { materialKey: "18k", weightG: "0", lossRate: 0, priceMode: 0, pricePerGram: 0, extraFee: 0 },
-                labor: { complexity: 'simple', designFee: "0", moldFee: "0", makingFee: "0", reworkFee: "0" },
+                labor: { complexity: 'simple', makingFee: "0" },
                 pack: { packFee: "0", certFee: "0" },
                 profitRate: "0", taxRate: "0"
             };
