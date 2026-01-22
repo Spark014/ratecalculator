@@ -26,7 +26,8 @@ export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed,
                 const gem = CATALOG.coloredGems.find(g => g.key === s.typeKey) || CATALOG.coloredGems[0];
                 const grade = gem.grades[s.gradeIndex]?.grade ?? "—";
                 const tName = CATALOG.treatments.find(t => t.key === s.treatmentKey)?.name ?? "—";
-                detail = `Grade:${grade} | Treat:${tName}`;
+                const colorInfo = s.gemColor ? ` | Color:${s.gemColor}` : "";
+                detail = `Grade:${grade} | Treat:${tName}${colorInfo}`;
             }
             const wmode = CATALOG.weightModes[s.weightMode];
             let wtxt = "";
@@ -43,6 +44,7 @@ export const SummarySection: React.FC<SummarySectionProps> = ({ state, computed,
         if (mat.key === '14k') matName = t.gold_14k;
         if (mat.key === 'pt950') matName = t.pt950;
         if (mat.key === 's925') matName = t.s925;
+        // Basic mapping, though dynamic config is better, this is just for display text.
 
         const text =
             `${t.title}
@@ -64,10 +66,7 @@ ${t.extra_fee}: ${state.metal.extraFee || 0}
 ${t.metal_cost}: ${ccy} ${computed.metalSub}
 
 【${t.labor_details}】
-${t.design_fee}: ${state.labor.designFee || 0}
-${t.mold_fee}: ${state.labor.moldFee || 0}
 ${t.making_fee}: ${state.labor.makingFee || 0}
-${t.buffer_fee}: ${state.labor.reworkFee || 0}
 ${t.labor_cost}: ${ccy} ${computed.laborSub}
 
 【${t.packaging_details}】

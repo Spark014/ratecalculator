@@ -199,7 +199,7 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
             }
         }
 
-        // Fallback to old logic
+        // Fallback or Legacy Logic
         const gem = CATALOG.coloredGems.find(g => g.key === line.typeKey) || CATALOG.coloredGems[0];
         const g = gem.grades[clamp(line.gradeIndex, 0, gem.grades.length - 1)]?.p ?? 0;
         return g * treatmentMult(line.treatmentKey);
@@ -262,26 +262,9 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
     // Actually the UI likely stores materialKey as "18k", "pt950" etc.
     // Let's use `purityKey` if available, or fallback to infer from `materialKey`
 
-    // Helper to find metal rate
-    const findRate = (k: string) => {
-        const kLow = k.toLowerCase();
-        if (kLow.includes('18k')) return CATALOG.METAL_RATES.gold['18k'];
-        if (kLow.includes('14k')) return CATALOG.METAL_RATES.gold['14k'];
-        if (kLow.includes('9k')) return CATALOG.METAL_RATES.gold['9k'];
-        if (kLow.includes('24k')) return CATALOG.METAL_RATES.gold['24k'];
-        if (kLow.includes('pt950') || kLow.includes('p950')) return CATALOG.METAL_RATES.platinum['p950'];
-        if (kLow.includes('pt900') || kLow.includes('p900')) return CATALOG.METAL_RATES.platinum['p900'];
-        if (kLow.includes('s925') || kLow.includes('silver')) return CATALOG.METAL_RATES.silver['s925'];
-        return null;
-    };
-
-    const mRate = findRate(metalDetails.purityKey || metalDetails.materialKey);
-    if (mRate) {
-        wastage = mRate.wastage;
-    } else {
-        // Fallback to manual lossRate input if not found in auto rates
-        if (metalDetails.priceMode === 1) wastage = num(metalDetails.lossRate) / 100;
-    }
+    // Use the lossRate from state (which is populated from Config in UI)
+    // lossRate is stored as percentage (e.g. 15), so divide by 100.
+    wastage = num(metalDetails.lossRate) / 100;
 
     // Checking for special color extra fee
     let colorExtra = 0;
@@ -316,7 +299,7 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
         }
     }
 
-    const laborSub = num(state.labor.designFee) + num(state.labor.moldFee) + makingFee + num(state.labor.reworkFee);
+    const laborSub = makingFee;
 
     // packaging
     const packSub = num(state.pack.packFee) + num(state.pack.certFee);

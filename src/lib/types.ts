@@ -48,10 +48,7 @@ export interface Metal {
 
 export interface Labor {
     complexity: 'simple' | 'middle' | 'complicated' | 'superComplicated';
-    designFee: string;
-    moldFee: string;
     makingFee: string;
-    reworkFee: string;
 }
 
 export interface Pack {

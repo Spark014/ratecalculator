@@ -30,24 +30,8 @@ export const LaborSection: React.FC<LaborSectionProps> = ({ labor, subtotal, cur
 
     return (
         <div className="card">
-            <h2>{t.labor_details}</h2>
+            <h2>Labour and Design Cost</h2>
             <div className="row">
-                <div className="col">
-                    <label>{t.design_fee}</label>
-                    <input
-                        type="number"
-                        value={labor.designFee}
-                        onChange={(e) => handleChange('designFee', e.target.value)}
-                    />
-                </div>
-                <div className="col">
-                    <label>{t.mold_fee}</label>
-                    <input
-                        type="number"
-                        value={labor.moldFee}
-                        onChange={(e) => handleChange('moldFee', e.target.value)}
-                    />
-                </div>
                 <div className="col">
                     <label>Complexity</label>
                     <select
@@ -61,21 +45,13 @@ export const LaborSection: React.FC<LaborSectionProps> = ({ labor, subtotal, cur
                     </select>
                 </div>
                 <div className="col">
-                    <label>{t.making_fee}</label>
+                    <label>Cost</label>
                     <input
                         type="number"
                         value={labor.makingFee}
                         onChange={(e) => handleChange('makingFee', e.target.value)}
-                        disabled // Auto-calculated
-                        style={{ background: 'var(--pill-bg)' }}
-                    />
-                </div>
-                <div className="col">
-                    <label>{t.buffer_fee}</label>
-                    <input
-                        type="number"
-                        value={labor.reworkFee}
-                        onChange={(e) => handleChange('reworkFee', e.target.value)}
+                    // Allow manual override? User said "only need complexity and its price". 
+                    // Usually implies auto, but often manual tweak needed.
                     />
                 </div>
             </div>

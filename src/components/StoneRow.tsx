@@ -220,14 +220,14 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                         </div>
                         {isMainStone && (
                             <div className="col">
-                                <label>Color</label>
+                                <label>Specific Color</label>
                                 <select
                                     value={stone.gemColor || ""}
                                     onChange={(e) => handleChange('gemColor', e.target.value)}
                                 >
                                     <option value="">Select Color</option>
-                                    {config.mainStones[stone.typeKey]?.treatments[stone.treatmentKey as 'heated' | 'unheated']?.colors.map((c, i) => (
-                                        <option key={c.name} value={c.name}>{c.name}</option>
+                                    {config.advancedGems && Object.keys(config.advancedGems).map(c => (
+                                        <option key={c} value={c}>{c}</option>
                                     ))}
                                 </select>
                             </div>

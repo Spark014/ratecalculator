@@ -64,15 +64,11 @@ const defaultPricing: PricingConfig = {
         superComplicated: 70,
     },
     metals: {
-        '18k_yellow': { name: '18K Yellow Gold', waste: 15, price: 70, extraFee: 0 },
-        '18k_white': { name: '18K White Gold', waste: 15, price: 70, extraFee: 0 },
-        '18k_rose': { name: '18K Rose Gold', waste: 15, price: 70, extraFee: 0 },
-        '14k': { name: '14K Gold', waste: 17, price: 55, extraFee: 0 },
-        '9k': { name: '9K Gold', waste: 23, price: 40, extraFee: 0 },
-        '24k': { name: '24K Gold', waste: 10, price: 90, extraFee: 0 },
-        'pt950': { name: 'PT950', waste: 30, price: 95, extraFee: 0 },
-        'pt900': { name: 'PT900', waste: 30, price: 90, extraFee: 0 },
         's925': { name: 'S925 Silver', waste: 0, price: 1.2, extraFee: 0 },
+        '9k': { name: '9K Gold', waste: 23, price: 40, extraFee: 0 },
+        '14k': { name: '14K Gold', waste: 17, price: 55, extraFee: 0 },
+        '18k': { name: '18K Gold', waste: 15, price: 70, extraFee: 0 },
+        '24k': { name: '24K Gold', waste: 10, price: 90, extraFee: 0 },
     },
     smallStones: {
         diamond: {
