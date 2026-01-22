@@ -18,8 +18,8 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
         onUpdate({ [field]: value });
     };
 
-    // Sorted keys for display: Silver -> Gold 24k
-    const sortedKeys = ['s925', '9k', '14k', '18k', '24k'];
+    // Sorted keys for display: Silver -> Gold 9k..24k -> Platinum
+    const sortedKeys = ['s925', '9k', '14k', '18k', '24k', 'p900', 'p950'];
 
     const handleRefreshRate = () => {
         if (metal.materialKey) {
@@ -119,6 +119,8 @@ export const MetalSection: React.FC<MetalSectionProps> = ({ metal, subtotal, cur
                         value={metal.lossRate}
                         onChange={(e) => handleChange('lossRate', e.target.value)}
                         placeholder="e.g. 15"
+                        disabled
+                        style={{ background: 'var(--pill-bg)', cursor: 'not-allowed' }}
                     />
                 </div>
                 <div className="col">

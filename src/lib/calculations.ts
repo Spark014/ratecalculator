@@ -269,10 +269,11 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
     // Checking for special color extra fee
     let colorExtra = 0;
     if (metalDetails.colorKey) {
-        if (['blue', 'purple', 'green'].includes(metalDetails.colorKey)) {
-            // Arbitrary extra fee? User image says "Additional Fee". 
-            // Let's assume a placeholder or leave it to manual extraFee input for now 
-            // unless we standardize a value. Let's make it 0 but ensure extraFee is added.
+        // Use config if available or defaults
+        const specialColors = config?.coloredGold?.colors.map(c => c.toLowerCase()) || ['green', 'blue', 'purple', 'black'];
+        if (specialColors.includes(metalDetails.colorKey.toLowerCase())) {
+             const feeUsd = config?.coloredGold?.extraFee || 15;
+             colorExtra = feeUsd * rate;
         }
     }
 

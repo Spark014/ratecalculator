@@ -69,6 +69,8 @@ const defaultPricing: PricingConfig = {
         '14k': { name: '14K Gold', waste: 17, price: 55, extraFee: 0 },
         '18k': { name: '18K Gold', waste: 15, price: 70, extraFee: 0 },
         '24k': { name: '24K Gold', waste: 10, price: 90, extraFee: 0 },
+        'p950': { name: 'Platinum 950', waste: 30, price: 35, extraFee: 0 },
+        'p900': { name: 'Platinum 900', waste: 30, price: 33, extraFee: 0 },
     },
     smallStones: {
         diamond: {
