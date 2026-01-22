@@ -17,7 +17,7 @@ const DEFAULT_METAL: Metal = {
     extraFee: 0
 };
 
-const DEFAULT_LABOR: Labor = { complexity: 'simple', designFee: "", moldFee: "", makingFee: "", reworkFee: "" };
+const DEFAULT_LABOR: Labor = { complexity: 'simple', makingFee: "" };
 const DEFAULT_PACK: Pack = { packFee: "", certFee: "" };
 
 export function newStoneLine({ roleIndex = 0, isDiamond = false } = {}): Stone {
