@@ -62,8 +62,8 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                             onChange={(e) => handleChange('smallStoneType', e.target.value === 'other' ? undefined : e.target.value)}
                         >
                             <option value="other">{t.gem_type} (Standard)</option>
-                            <option value="diamond_std">Diamond - Standard</option>
-                            <option value="diamond_single">Diamond - Single Refraction</option>
+                            <option value="diamond_std">Diamond - Standard Cut</option>
+                            <option value="diamond_single">Diamond - Single Refraction/Cut</option>
                             <option value="zircon">Zircon</option>
                             <option value="moissanite">Moissanite</option>
                         </select>
@@ -199,7 +199,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 onChange={(e) => handleChange('smallStoneType', e.target.value)}
                             >
                                 <option value="diamond_std">Standard Cut</option>
-                                <option value="diamond_single">Single Refraction</option>
+                                <option value="diamond_single">Single Refraction/Cut</option>
                             </select>
                         </div>
 
