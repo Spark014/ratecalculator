@@ -30,7 +30,8 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             <div className="stone-head">
                 <div className="badge">
                     <b>#{index + 1}</b>
-                    <div className="pill">{isDiamond ? t.diamond : t.gem_type}</div>
+                    {/* Badge now shows Role (Main Stone / Side Stone) instead of Type */}
+                    <div className="pill">{stone.roleIndex === 0 ? t.main_stone : t.side_stone}</div>
                 </div>
                 <button onClick={() => onRemove(index)} className="danger" title="Remove Row">
                     <Trash2 size={14} /> {t.delete}
@@ -52,17 +53,17 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     </select>
                 </div>
 
-                {/* NEW: Small Stone Type Selector */}
+                {/* Small Stone Type Selector */}
                 {stone.roleIndex === 1 && (
                     <div className="col">
-                        <label>Small Stone</label>
+                        <label>{t.small_stones_title || "Small Stone"}</label>
                         <select
                             value={stone.smallStoneType || 'other'}
                             onChange={(e) => handleChange('smallStoneType', e.target.value === 'other' ? undefined : e.target.value)}
                         >
-                            <option value="other">None (Standard Gem)</option>
-                            <option value="diamond_std">Diamond - Standard Cut</option>
-                            <option value="diamond_single">Diamond - Single Refraction/Cut</option>
+                            <option value="other">{t.gem_type} (Standard)</option>
+                            <option value="diamond_std">Diamond - Standard</option>
+                            <option value="diamond_single">Diamond - Single Refraction</option>
                             <option value="zircon">Zircon</option>
                             <option value="moissanite">Moissanite</option>
                         </select>
@@ -85,9 +86,12 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                         )}
                     </div>
                 )}
+            </div>
 
+            {/* Weight Row (Mode + Inputs on same line) */}
+            <div className="row" style={{ marginTop: 10 }}>
                 {/* Weight Mode */}
-                <div className="col" style={{ flex: 2 }}>
+                <div className="col" style={{ flex: 1.5 }}>
                     <label>{t.weight_mode}</label>
                     <select
                         value={stone.weightMode}
@@ -98,12 +102,10 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                         <option value={2}>{t.diameter_qty}</option>
                     </select>
                 </div>
-            </div>
 
-            {/* Weight Inputs */}
-            <div className="row" style={{ marginTop: 10 }}>
+                {/* Dynamic Inputs based on Mode */}
                 {stone.weightMode === 0 && (
-                    <div className="col">
+                    <div className="col" style={{ flex: 1.5 }}>
                         <label>{t.total_weight}</label>
                         <input
                             type="number"
@@ -114,7 +116,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 )}
                 {stone.weightMode === 1 && (
                     <>
-                        <div className="col">
+                        <div className="col" style={{ flex: 1 }}>
                             <label>{t.weight}</label>
                             <input
                                 type="number"
@@ -122,7 +124,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 onChange={(e) => handleChange('ctEach', e.target.value)}
                             />
                         </div>
-                        <div className="col">
+                        <div className="col" style={{ flex: 1 }}>
                             <label>{t.qty}</label>
                             <input
                                 type="number"
@@ -134,7 +136,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 )}
                 {stone.weightMode === 2 && (
                     <>
-                        <div className="col">
+                        <div className="col" style={{ flex: 1 }}>
                             <label>{t.size_mm}</label>
                             <input
                                 type="number"
@@ -142,7 +144,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 onChange={(e) => handleChange('mm', e.target.value)}
                             />
                         </div>
-                        <div className="col">
+                        <div className="col" style={{ flex: 1 }}>
                             <label>{t.qty}</label>
                             <input
                                 type="number"
@@ -154,7 +156,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                 )}
             </div>
 
-            {/* Quality / 4C */}
+            {/* Quality / 4C / Details */}
             <div style={{ background: 'var(--card)', padding: 10, borderRadius: 8, border: '1px solid var(--stone-border)', margin: '10px 0' }}>
                 {isSmallStone ? (
                     <div className="row">
@@ -190,7 +192,6 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     </div>
                 ) : isDiamond ? (
                     <div className="row">
-                        {/* Replace Complex 4C with "Small Stone" style Logic even for Main/Generic "Diamond" type */}
                         <div className="col">
                             <label>{t.diamond_type}</label>
                             <select
@@ -198,7 +199,7 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 onChange={(e) => handleChange('smallStoneType', e.target.value)}
                             >
                                 <option value="diamond_std">Standard Cut</option>
-                                <option value="diamond_single">Single Refraction/Cut</option>
+                                <option value="diamond_single">Single Refraction</option>
                             </select>
                         </div>
 
