@@ -44,6 +44,8 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                     <select
                         value={stone.roleIndex}
                         onChange={(e) => handleChange('roleIndex', parseInt(e.target.value))}
+                        disabled={stone.roleIndex === 1}
+                        style={stone.roleIndex === 1 ? { background: 'var(--pill-bg)', opacity: 0.8, cursor: 'not-allowed' } : {}}
                     >
                         <option value={0}>{t.main_stone}</option>
                         <option value={1}>{t.side_stone}</option>

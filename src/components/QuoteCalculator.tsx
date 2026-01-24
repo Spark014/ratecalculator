@@ -103,7 +103,7 @@ export const QuoteCalculator: React.FC = () => {
 
                         <div className="btnrow" style={{ marginBottom: 12 }}>
                             <button onClick={() => addStone(0, false)}>{t.add_stone_row}</button>
-                            <button className="secondary" onClick={() => addStone(0, true)}>{t.add_diamond_row}</button>
+                            <button className="secondary" onClick={() => addStone(1, true)}>{t.add_diamond_row}</button>
                         </div>
 
                         {state.stones.map((stone, index) => (
