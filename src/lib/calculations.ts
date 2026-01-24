@@ -135,7 +135,7 @@ export function getSmallStonePrice(line: Stone, config?: PricingConfig): { price
     const zirconPrice = config?.smallStones.zircon ?? CATALOG.SMALL_STONE.zircon;
     const moissWax = config?.smallStones.moissanite.waxSet ?? CATALOG.SMALL_STONE.moissanite.wax_set;
     const moissHand = config?.smallStones.moissanite.handSet ?? CATALOG.SMALL_STONE.moissanite.hand_set;
-    
+
     // Diamond
     const diaSingle = config?.smallStones.diamond.single ?? CATALOG.SMALL_STONE.diamond.singleCut;
     // @ts-ignore
@@ -165,7 +165,7 @@ export function getSmallStonePrice(line: Stone, config?: PricingConfig): { price
     // Use line.smallDiamondQuality (SI/VS) or fallback to SI
     const quality = line.smallDiamondQuality || 'SI';
     const price = quality === 'VS' ? diaVS : diaSI;
-    
+
     return {
         pricePerUnit: price || 0,
         unit: 'ct'
@@ -174,7 +174,35 @@ export function getSmallStonePrice(line: Stone, config?: PricingConfig): { price
 
 
 export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): number {
+    // Check if it's a side stone with specific small stone type OR a generic diamond (Main/Side) that uses the simplified logic
+    // matching the logic in calculateQuote
+    const isSimplifiedDiamond = line.typeKey === 'diamond';
+    const isSmallStone = (line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other');
+
+    if (isSimplifiedDiamond || isSmallStone) {
+        const { pricePerUnit, unit } = getSmallStonePrice(line, config);
+        // If unit is piece, we can't really return a "Price Per Ct" easily without weight info.
+        // But this function is expected to return a price-per-ct equivalent for the UI "Price/ct" box usually.
+        // If it's per piece, the UI usually doesn't show Price/ct, or we have to fake it?
+
+        // However, looking at StoneRow:
+        // If smallStoneType is 'zircon' or 'moissanite', it shows "Standard Pricing" text instead of Price row sometimes?
+        // Actually for Diamond it shows Price Row. Diamond is per Carat.
+
+        // If unit is 'ct', return it directly.
+        if (unit === 'ct') return pricePerUnit;
+
+        // If unit is 'piece', we might return 0 or the piece price? 
+        // Returning the piece price as "PricePerCt" would be wrong if weight != 1.
+        // But for Zircon/Moissanite which are per piece, the Price Mode might not matter as much, 
+        // or the UI hides the Price/ct input for them (checked StoneRow, it hides or shows text).
+        // e.g. for Zircon: shows "Standard Pricing" text.
+        return 0;
+    }
+
     if (isDiamondLine(line)) {
+        // This block might now be unreachable if 'diamond' type is always simplified.
+        // But keeping it for backward compatibility or if typeKey is 'diamond_legacy'?
         const carat = getLineTotalCt(line);
         return diamondAutoPricePerCt({
             carat,
@@ -188,26 +216,16 @@ export function getStoneAutoPricePerCt(line: Stone, config?: PricingConfig): num
         if (line.gemColor) {
             const advancedPrice = getAdvancedGemPrice(line, config);
             if (advancedPrice > 0) {
-                // For these Advanced Gems, the catalog price is explicitly for "Heated".
-                // So we treat "Heated" as baseline (1.0 relative to table), and adjust others relative to it.
-                // Current global multipliers: Heated=0.9, Natural=1.0, Unheated=1.25.
-                // To make Heated = TablePrice * 1.0, we need to divide out the global heated discount 
-                // or just override formatting.
-
                 // If Treatment is 'heated', use Table Price.
                 if (line.treatmentKey === 'heated') return advancedPrice;
 
                 // 2026-01-22 Update: User requested Heated and Unheated to be the SAME price for now.
                 if (line.treatmentKey === 'unheated') return advancedPrice;
 
-                // If Natural (default), assume standard market which often aligns with Heated for these listings?
-                // Or if "Natural" means Unheated to the user? "Natural (Default)" usually allows treatment.
-                // Let's assume standard market price (Heated) for default if unsure, or apply small adjustment.
-                // If default/natural_unknown:
+                // If Natural (default)
                 if (line.treatmentKey === 'natural_unknown') return advancedPrice;
 
                 // Fallback for others (Diffusion etc): Apply standard multiplier relative to Heated?
-                // Heated(0.9) -> Diffusion(0.6). Ratio: 0.6/0.9 = 0.66
                 const regularMult = treatmentMult(line.treatmentKey);
                 return advancedPrice * (regularMult / 0.9);
             }
@@ -232,9 +250,9 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
 
         // Check if it's a side stone with specific small stone type OR a generic diamond (Main/Side) that uses the simplified logic
         const isSimplifiedDiamond = line.typeKey === 'diamond';
-        
+
         if ((line.roleIndex === 1 && line.smallStoneType && line.smallStoneType !== 'other') || isSimplifiedDiamond) {
-            
+
             // Re-use small stone pricing logic for simplified Main Diamonds too
             const { pricePerUnit, unit } = getSmallStonePrice(line, config);
 
@@ -290,8 +308,8 @@ export function calculateQuote(state: QuoteState, config?: PricingConfig, rates?
         // Use config if available or defaults
         const specialColors = config?.coloredGold?.colors.map(c => c.toLowerCase()) || ['green', 'blue', 'purple', 'black'];
         if (specialColors.includes(metalDetails.colorKey.toLowerCase())) {
-             const feeUsd = config?.coloredGold?.extraFee || 15;
-             colorExtra = feeUsd * rate;
+            const feeUsd = config?.coloredGold?.extraFee || 15;
+            colorExtra = feeUsd * rate;
         }
     }
 
