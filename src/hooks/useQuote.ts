@@ -34,7 +34,7 @@ export function newStoneLine({ roleIndex = 0, isDiamond = false } = {}): Stone {
         qty: roleIndex === 0 ? "1" : "0",
         mm: "",
         gradeIndex: 1,
-        treatmentKey: "natural_unknown",
+        treatmentKey: "heated",
         dColor: "G-H",
         dClarity: "VS",
         dCutIndex: 0,
@@ -131,37 +131,37 @@ export function useQuote(config?: PricingConfig) {
                 // calculateQuote: "if (line.priceMode === 0) ppc = basePpc * rate"
                 // So line.pricePerCt is technically ignored during total Calc if Auto.
                 // BUT the UI reads it. So we should update it for UI consistency.
-                
+
                 // Note: The UI StoneRow displays pricePerCt. 
                 // Is the stored pricePerCt in USD? or Local Currency?
                 // In calculateQuote, if priceMode=0, it effectively ignores stored pricePerCt 
                 // and re-derives.
                 // But for display, we want the user to see the value.
                 // If the user selects a stone, we want to show existing price.
-                
+
                 // Let's store the USD value or the Converted value?
                 // If the App supports multi-currency, usually we store Base or Converted.
                 // Given `calculateQuote` does `ppc = basePpc * rate`, the `stonesTotal` is correct.
                 // The `StoneRow` shows `stone.pricePerCt`.
                 // If I store `basePpc` (USD) in `pricePerCt`, but the user has selected LKR...
                 // The user sees USD value in LKR view? That's confusing.
-                
+
                 // However, `updateStone` doesn't know the current 'rate' easily (it's in the hook scope `rates`?).
                 // `const { rates } = useCurrency();` is at the top of hook.
                 // So I CAN access `rates`.
-                
+
                 // Let's proceed carefully.
                 // If I simply update it here, I fix the UI 'Blue Text' (Total Price/Price Per Ct).
             }
 
             // We need to fetch the rate for the current currency
             // `rates` is from useCurrency().
-            const rate = rates[prev.currency] || 1; 
+            const rate = rates[prev.currency] || 1;
 
             if (newStone.priceMode === 0) {
-                 const basePpc = getStoneAutoPricePerCt(newStone, config);
-                 const localPpc = basePpc * rate;
-                 newStone.pricePerCt = String(money(localPpc));
+                const basePpc = getStoneAutoPricePerCt(newStone, config);
+                const localPpc = basePpc * rate;
+                newStone.pricePerCt = String(money(localPpc));
             }
 
             // Recalculate Subtotal

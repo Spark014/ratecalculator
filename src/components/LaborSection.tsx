@@ -30,10 +30,10 @@ export const LaborSection: React.FC<LaborSectionProps> = ({ labor, subtotal, cur
 
     return (
         <div className="card">
-            <h2>Labour and Design Cost</h2>
+            <h2>{t.labor_section_title}</h2>
             <div className="row">
                 <div className="col">
-                    <label>Complexity</label>
+                    <label>{t.complexity}</label>
                     <select
                         value={labor.complexity || 'simple'}
                         onChange={(e) => handleChange('complexity', e.target.value)}
@@ -45,7 +45,7 @@ export const LaborSection: React.FC<LaborSectionProps> = ({ labor, subtotal, cur
                     </select>
                 </div>
                 <div className="col">
-                    <label>Cost</label>
+                    <label>{t.cost}</label>
                     <input
                         type="number"
                         value={labor.makingFee}

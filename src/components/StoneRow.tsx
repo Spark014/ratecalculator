@@ -69,19 +69,19 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
 
                 {/* Type */}
                 {!isSmallStone && (
-                <div className="col">
-                    <label>{t.gem_type}</label>
-                    {isDiamond ? (
-                        <input type="text" value={t.diamond} disabled style={{ background: 'var(--pill-bg)' }} />
-                    ) : (
-                        <select
-                            value={stone.typeKey}
-                            onChange={(e) => handleChange('typeKey', e.target.value)}
-                        >
-                            {CATALOG.coloredGems.map(g => <option key={g.key} value={g.key}>{t[g.key as keyof typeof t] || g.name}</option>)}
-                        </select>
-                    )}
-                </div>
+                    <div className="col">
+                        <label>{t.gem_type}</label>
+                        {isDiamond ? (
+                            <input type="text" value={t.diamond} disabled style={{ background: 'var(--pill-bg)' }} />
+                        ) : (
+                            <select
+                                value={stone.typeKey}
+                                onChange={(e) => handleChange('typeKey', e.target.value)}
+                            >
+                                {CATALOG.coloredGems.map(g => <option key={g.key} value={g.key}>{t[g.key as keyof typeof t] || g.name}</option>)}
+                            </select>
+                        )}
+                    </div>
                 )}
 
                 {/* Weight Mode */}
@@ -155,12 +155,12 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
             {/* Quality / 4C */}
             <div style={{ background: 'var(--card)', padding: 10, borderRadius: 8, border: '1px solid var(--stone-border)', margin: '10px 0' }}>
                 {isSmallStone ? (
-                     <div className="row">
+                    <div className="row">
                         {stone.smallStoneType === 'diamond_std' && (
                             <div className="col">
-                                <label>Quality (Clarities)</label>
-                                <select 
-                                    value={stone.smallDiamondQuality || 'SI'} 
+                                <label>{t.quality_clarity}</label>
+                                <select
+                                    value={stone.smallDiamondQuality || 'SI'}
                                     onChange={(e) => handleChange('smallDiamondQuality', e.target.value)}
                                 >
                                     <option value="SI">SI (600 USD/ct)</option>
@@ -168,29 +168,29 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 </select>
                             </div>
                         )}
-                         {stone.smallStoneType === 'moissanite' && (
-                             <div className="col">
-                                 <label>Setting Type</label>
-                                 <select 
-                                     value={stone.moissaniteType || 'wax_set'} 
-                                     onChange={(e) => handleChange('moissaniteType', e.target.value)}
-                                 >
-                                     <option value="wax_set">Wax Set</option>
-                                     <option value="hand_set">Hand Set</option>
-                                 </select>
-                             </div>
+                        {stone.smallStoneType === 'moissanite' && (
+                            <div className="col">
+                                <label>{t.setting_type}</label>
+                                <select
+                                    value={stone.moissaniteType || 'wax_set'}
+                                    onChange={(e) => handleChange('moissaniteType', e.target.value)}
+                                >
+                                    <option value="wax_set">{t.wax_set}</option>
+                                    <option value="hand_set">{t.hand_set}</option>
+                                </select>
+                            </div>
                         )}
                         {(stone.smallStoneType === 'zircon' || stone.smallStoneType === 'diamond_single') && (
-                            <div className="col" style={{display:'flex', alignItems:'center', marginTop:15, color:'var(--text-weak)'}}>
-                                <i>Standard Pricing</i>
+                            <div className="col" style={{ display: 'flex', alignItems: 'center', marginTop: 15, color: 'var(--text-weak)' }}>
+                                <i>{t.std_pricing}</i>
                             </div>
                         )}
                     </div>
                 ) : isDiamond ? (
                     <div className="row">
-                         {/* Replace Complex 4C with "Small Stone" style Logic even for Main/Generic "Diamond" type */}
-                         <div className="col">
-                            <label>Diamond Type</label>
+                        {/* Replace Complex 4C with "Small Stone" style Logic even for Main/Generic "Diamond" type */}
+                        <div className="col">
+                            <label>{t.diamond_type}</label>
                             <select
                                 value={stone.smallStoneType || 'diamond_std'}
                                 onChange={(e) => handleChange('smallStoneType', e.target.value)}
@@ -198,13 +198,13 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 <option value="diamond_std">Standard Cut</option>
                                 <option value="diamond_single">Single Refraction/Cut</option>
                             </select>
-                         </div>
+                        </div>
 
                         {(stone.smallStoneType === 'diamond_std' || !stone.smallStoneType) && (
                             <div className="col">
-                                <label>Quality</label>
-                                <select 
-                                    value={stone.smallDiamondQuality || 'SI'} 
+                                <label>{t.quality_clarity}</label>
+                                <select
+                                    value={stone.smallDiamondQuality || 'SI'}
                                     onChange={(e) => handleChange('smallDiamondQuality', e.target.value)}
                                 >
                                     <option value="SI">SI (600 USD/ct)</option>
@@ -212,16 +212,66 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 </select>
                             </div>
                         )}
-                         {stone.smallStoneType === 'diamond_single' && (
-                            <div className="col" style={{display:'flex', alignItems:'center', marginTop:15, color:'var(--text-weak)'}}>
-                                <i>Price: 300 USD/ct</i>
+                        {stone.smallStoneType === 'diamond_single' && (
+                            <div className="col" style={{ display: 'flex', alignItems: 'center', marginTop: 15, color: 'var(--text-weak)' }}>
+                                <i>{t.price_usd_ct}</i>
                             </div>
                         )}
                     </div>
                 ) : (
                     <div className="row">
+                        {/* 1. Specific Color */}
+                        {isMainStone && (
+                            <div className="col">
+                                <label>{t.specific_color}</label>
+                                <select
+                                    value={stone.gemColor || ""}
+                                    onChange={(e) => handleChange('gemColor', e.target.value)}
+                                >
+                                    <option value="">{t.select_color}</option>
+                                    {config.advancedGems && Object.keys(config.advancedGems)
+                                        .filter(colorName => {
+                                            const type = stone.typeKey?.toLowerCase().trim();
+                                            const color = colorName.trim();
+                                            if (type === 'sapphire') return ['Royal Blue', 'Cornflower Blue', 'Light Blue'].includes(color);
+                                            if (type === 'ruby') return ['Pigeon Blood'].includes(color);
+                                            if (type === 'emerald') return ['Vivid Green'].includes(color);
+                                            return false;
+                                        })
+                                        .map(c => (
+                                            <option key={c} value={c}>{c}</option>
+                                        ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {/* 2. Treatment */}
                         <div className="col">
-                            <label>Grade</label>
+                            <label>{t.treatment}</label>
+                            {isMainStone ? (
+                                <select
+                                    value={stone.treatmentKey}
+                                    onChange={(e) => handleChange('treatmentKey', e.target.value)}
+                                    disabled
+                                    title="Locked to Heated (Standard)"
+                                    style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--pill-bg)' }}
+                                >
+                                    <option value="heated">{t.heated}</option>
+                                    <option value="unheated">{t.unheated}</option>
+                                </select>
+                            ) : (
+                                <select
+                                    value={stone.treatmentKey}
+                                    onChange={(e) => handleChange('treatmentKey', e.target.value)}
+                                >
+                                    {CATALOG.treatments.map(tr => <option key={tr.key} value={tr.key}>{t[tr.key as keyof typeof t] || tr.name}</option>)}
+                                </select>
+                            )}
+                        </div>
+
+                        {/* 3. Grade */}
+                        <div className="col">
+                            <label>{t.grade}</label>
                             <select
                                 value={stone.gradeIndex}
                                 onChange={(e) => handleChange('gradeIndex', parseInt(e.target.value))}
@@ -231,62 +281,6 @@ export const StoneRow: React.FC<StoneRowProps> = ({ stone, index, currency, onUp
                                 ))}
                             </select>
                         </div>
-                        <div className="col">
-                            <label>{t.treatment}</label>
-                            {isMainStone ? (
-                                <select
-                                    value={stone.treatmentKey}
-                                    onChange={(e) => handleChange('treatmentKey', e.target.value)}
-                                >
-                                    <option value="unheated">Unheated</option>
-                                    <option value="heated">Heated</option>
-                                </select>
-                            ) : (
-                                <select
-                                    value={stone.treatmentKey}
-                                    onChange={(e) => handleChange('treatmentKey', e.target.value)}
-                                >
-                                    {CATALOG.treatments.map(tr => <option key={tr.key} value={tr.key}>{tr.name}</option>)}
-                                </select>
-                            )}
-                        </div>
-                        {isMainStone && (
-                            <div className="col">
-                                <label>Specific Color</label>
-                                <select
-                                    value={stone.gemColor || ""}
-                                    onChange={(e) => handleChange('gemColor', e.target.value)}
-                                >
-                                    <option value="">Select Color</option>
-                                    {config.advancedGems && Object.keys(config.advancedGems)
-                                        .filter(colorName => {
-                                            // Filter colors based on Gem Type (Strict Association)
-                                            const type = stone.typeKey?.toLowerCase().trim();
-                                            const color = colorName.trim();
-                                            
-                                            // 1. Sapphire
-                                            if (type === 'sapphire') {
-                                                return ['Royal Blue', 'Cornflower Blue', 'Light Blue'].includes(color);
-                                            }
-                                            // 2. Ruby
-                                            if (type === 'ruby') {
-                                                return ['Pigeon Blood'].includes(color);
-                                            }
-                                            // 3. Emerald
-                                            if (type === 'emerald') {
-                                                return ['Vivid Green'].includes(color);
-                                            }
-
-                                            // 4. Default / Fallback for other gems
-                                            // If key matches generic colors, maybe show them? For now, show none strict.
-                                            return false; 
-                                        })
-                                        .map(c => (
-                                            <option key={c} value={c}>{c}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
                     </div>
                 )}
             </div>

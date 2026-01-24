@@ -98,6 +98,23 @@ export const translations = {
         cert_fee_optional: "Cert/Tag Fee (Optional)",
         packaging_subtotal: "Packaging Subtotal",
 
+        // Labor Section Specific
+        labor_section_title: "Labour and Design Cost",
+        complexity: "Complexity",
+        cost: "Cost",
+
+        // StoneRow Specific
+        grade: "Grade",
+        specific_color: "Specific Color",
+        select_color: "Select Color",
+        diamond_type: "Diamond Type",
+        setting_type: "Setting Type",
+        quality_clarity: "Quality (Clarity)",
+        wax_set: "Wax Set",
+        hand_set: "Hand Set",
+        std_pricing: "Standard Pricing",
+        price_usd_ct: "Price: 300 USD/ct", // Context specific warning/info
+
         // Admin
         pricing_config: "Pricing Configuration",
         base_usd: "Base: USD",
@@ -266,6 +283,23 @@ export const translations = {
         packaging_fee: "包装费",
         cert_fee_optional: "证书/吊牌费 (可选)",
         packaging_subtotal: "包装小计",
+
+        // Labor Section Specific
+        labor_section_title: "工费与设计成本",
+        complexity: "制作工艺",
+        cost: "费用",
+
+        // StoneRow Specific
+        grade: "等级",
+        specific_color: "具体颜色",
+        select_color: "选择",
+        diamond_type: "钻石类型",
+        setting_type: "镶嵌类型",
+        quality_clarity: "品质 (净度)",
+        wax_set: "蜡镶",
+        hand_set: "手镶",
+        std_pricing: "标准定价",
+        price_usd_ct: "价格: 300 USD/ct", // Context specific warning/info
 
         // Admin
         pricing_config: "价格配置",
